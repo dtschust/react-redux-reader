@@ -21,16 +21,16 @@ function BaseFeedListItem({
 			style={{
 				backgroundColor: isActive ? '#f0eee8': undefined,
 				borderBottom: '1px solid #e6e4de',
-				padding: '10px 20px',
+				padding: '0 20px 10px',
 				cursor: 'pointer',
 			}}
 			onClick={() => {selectFeedItem(id)}}
 		>
-			<div style={{ color: '#919190', fontSize: '14px', padding: '5px 0' }}>
+			<div style={{ color: '#919190', fontSize: '12px', padding: '5px 0 0' }}>
 				{feed_name}
-				<span style={{float: 'right'}}>(about {moment(published_at * 1000).fromNow()})</span>
+				<span style={{float: 'right'}}>about {moment(published_at * 1000).fromNow()}</span>
 			</div>
-			<div style={{ fontWeight: read ? 'normal': 'bold' }}>{title}</div>
+			<div style={{ fontWeight: read ? 'normal': 'bold', padding: '5px 0' }}>{title}</div>
 			<div style={{
 				color: '#919190',
 				fontSize: '14',

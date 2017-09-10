@@ -132,5 +132,5 @@ function getFeedItemsForSub(state, sub) {
 		});
 	}
 
-	return matchingFeeds;
+	return _(matchingFeeds).sortBy('published_at').reverse().value();
 }

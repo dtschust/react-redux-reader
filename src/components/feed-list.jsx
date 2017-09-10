@@ -34,26 +34,34 @@ class FeedList extends Component {
 
 	nextItem() {
 		const { feedIds, selectedFeedId, selectFeedItem } = this.props;
+		let idToScrollTo;
 
 		const currentIndex = feedIds.indexOf(selectedFeedId);
 		if (currentIndex >= 0 && currentIndex + 1 < feedIds.length) {
-			selectFeedItem(feedIds[currentIndex + 1]);
+			idToScrollTo = feedIds[currentIndex + 1];
 		} else {
-			selectFeedItem(feedIds[0]);
+			idToScrollTo = feedIds[0];
 		}
+
+		selectFeedItem(idToScrollTo);
+		document.querySelector(`#feed-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
 
 	prevItem() {
 		const { feedIds, selectedFeedId, selectFeedItem } = this.props;
+		let idToScrollTo;
 
 		const currentIndex = feedIds.indexOf(selectedFeedId);
 		if (currentIndex === 0) {
 			return;
 		} else if (currentIndex > 0 && currentIndex - 1 >= 0) {
-			selectFeedItem(feedIds[currentIndex - 1]);
+			idToScrollTo = feedIds[currentIndex - 1];
 		} else {
-			selectFeedItem(feedIds[0]);
+			idToScrollTo = feedIds[0];
 		}
+
+		selectFeedItem(idToScrollTo);
+		document.querySelector(`#feed-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
 
 	toggleRead() {

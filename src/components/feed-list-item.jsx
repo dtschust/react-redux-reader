@@ -17,6 +17,7 @@ function BaseFeedListItem({
 } = {}) {
 	return (
 		<div
+			id={`feed-item-${id}`}
 			style={{
 				backgroundColor: isActive ? '#f0eee8': undefined,
 				borderBottom: '1px solid #e6e4de',
@@ -36,7 +37,9 @@ function BaseFeedListItem({
 				overflow: 'hidden',
 				textOverflow: 'ellipsis',
 				whiteSpace: 'nowrap',
-			}} dangerouslySetInnerHTML={{__html: summary}} />
+			 }}>
+				{summary}
+			</div>
 		</div>
 	)
 

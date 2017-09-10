@@ -29,28 +29,37 @@ class SubList extends Component {
 
 	nextSub() {
 		const { subscriptionIds, selectedSubscriptionId, selectSub } = this.props;
+		let idToScrollTo;
 		if (selectedSubscriptionId === ALL_SUBSCRIPTION && subscriptionIds[0]) {
-			selectSub(subscriptionIds[0]);
-			return;
+			idToScrollTo = subscriptionIds[0];
+		} else {
+			const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
+			if (currentIndex >= 0 && currentIndex + 1 < subscriptionIds.length) {
+				idToScrollTo = subscriptionIds[currentIndex + 1];
+			} else {
+				idToScrollTo = ALL_SUBSCRIPTION
+			}
 		}
 
-		const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
-		if (currentIndex >= 0 && currentIndex + 1 < subscriptionIds.length) {
-			selectSub(subscriptionIds[currentIndex + 1]);
-		} else if (currentIndex + 1 === subscriptionIds.length) {
-			selectSub(ALL_SUBSCRIPTION);
-		}
+		selectSub(idToScrollTo);
+		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
 
 	prevSub() {
 		const { subscriptionIds, selectedSubscriptionId, selectSub } = this.props;
+		let idToScrollTo;
 
 		const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
 		if (currentIndex === 0) {
-			selectSub(ALL_SUBSCRIPTION);
+			idToScrollTo = ALL_SUBSCRIPTION;
 		} else if (currentIndex >= 0 && currentIndex - 1 >= 0) {
-			selectSub(subscriptionIds[currentIndex - 1]);
+			idToScrollTo = subscriptionIds[currentIndex - 1];
+		} else {
+			idToScrollTo = ALL_SUBSCRIPTION;
 		}
+
+		selectSub(idToScrollTo);
+		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
 	render() {
 		return (

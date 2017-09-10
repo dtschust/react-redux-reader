@@ -29,7 +29,8 @@ export default createReducer({
 }, initialState);
 
 export function getAllSubscriptionIds(state) {
-	return state && state.subscriptions && Object.keys(state.subscriptions);
+	// return state && state.subscriptions && Object.keys(state.subscriptions);
+	return state && state.subscriptions && _.map(_.sortBy(state.subscriptions, ({title}) => title.toLowerCase()), 'feed_id')
 }
 
 export function getSubscriptionById(state, id) {
@@ -37,5 +38,6 @@ export function getSubscriptionById(state, id) {
 }
 
 export function getUnreadSubscriptionIds(state) {
-	return _.uniq(_.map(_.filter(getAllFeedItems(state), { read: false }), 'feed_id'));
+	const unreadSubscriptionIds = _.uniq(_.map(_.filter(getAllFeedItems(state), { read: false }), 'feed_id'));
+	return _.sortBy(unreadSubscriptionIds, (id) => getSubscriptionById(state, id).title.toLowerCase());
 }

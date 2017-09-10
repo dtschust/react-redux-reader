@@ -16,6 +16,7 @@ a {
 }
 
 #sub-list {
+  overflow: scroll;
   padding: 30px 0;
   width: 250px;
   background: #4d4c4d;

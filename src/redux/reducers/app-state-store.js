@@ -7,7 +7,7 @@ export const updateShowFilter = createAction('Change the filter to show ALL or U
 const ALL_SUBSCRIPTION = 'ALL_SUBSCRIPTION';
 
 const SHOW_ALL = 'SHOW_ALL';
-const SHOW_UNREAD = 'SHOW_UNREAD';
+export const SHOW_UNREAD = 'SHOW_UNREAD';
 
 const initialState = {
 	selectedSub: ALL_SUBSCRIPTION,

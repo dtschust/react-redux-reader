@@ -38,8 +38,6 @@ export function apiUpdateFeedItem(id, options = {}) {
 	}
 
 	return fetch(URL, { method: 'post' }).then(response => response.json());
-});
-
 };
 
 export function apiFetchSubscriptions() {

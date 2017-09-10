@@ -1,15 +1,16 @@
+import _ from 'lodash';
 import { createAction, createReducer } from 'redux-act';
 import sanitizeHtml from 'sanitize-html';
 
 import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
-import { SHOW_UNREAD } from './app-state-store';
+import { getShowFilter, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
-const updateReadStatus = createAction('Update the read status of an item by id');
+export const updateReadStatus = createAction('Update the read status of an item by id');
 
 export function fetchFeedItems(limit, offset, feedId) {
 	return (dispatch, getState) => {
-		const read = getState().appState.show === SHOW_UNREAD ?
+		const read = getShowFilter(getState()) === SHOW_UNREAD ?
 			false :
 			undefined;
 		const options = {
@@ -65,3 +66,36 @@ export default createReducer({
 	},
 
 }, initialState);
+
+export function getAllFeedItems(state) {
+	return state && state.feedItems;
+}
+
+export function getAllFeedItemIds(state) {
+	return state && state.feedItems && Object.keys(state.feedItems);
+}
+
+export function getAllUnreadFeedItemIds(state) {
+	if (!state || !state.feedItems) {
+		return [];
+	}
+	const unreadFeedItems = _.filter(state.feedItems, { read: false })
+	return Object.keys(unreadFeedItems);
+}
+
+export function getFeedItem(state, id) {
+	return state && state.feedItems && state.feedItems[id];
+}
+
+export function getCountForFeed(state, id) {
+	let matchingFeeds = state.feedItems;
+	if (id !== ALL_SUBSCRIPTION) {
+		matchingFeeds = _.filter(state.feedItems, { feed_id: parseInt(id, 10) });
+	}
+
+	if (getShowFilter(state) === SHOW_UNREAD) {
+		matchingFeeds = _.filter(matchingFeeds, { read: false });
+	}
+
+	return Object.keys(matchingFeeds).length
+}

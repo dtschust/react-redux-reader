@@ -9,5 +9,6 @@ export default function configureStore(reducers, middleware = [ ReduxThunk ]) {
 		applyMiddleware(...middleware)
 	));
 
+	window.redux = store;
 	return store;
 }

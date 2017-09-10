@@ -19,7 +19,7 @@ const SubList = ({ subscriptionIds }) => {
 	);
 };
 
-function mapDispatchToProps(state) {
+function mapStateToProps(state) {
 	const showUnread = getShowFilter(state) === SHOW_UNREAD;
 	return {
 		subscriptionIds: showUnread ?
@@ -28,5 +28,5 @@ function mapDispatchToProps(state) {
 	};
 }
 
-export default connect(mapDispatchToProps)(SubList);
+export default connect(mapStateToProps)(SubList);
 

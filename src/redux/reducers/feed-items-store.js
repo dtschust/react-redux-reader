@@ -3,7 +3,7 @@ import { createAction, createReducer } from 'redux-act';
 import sanitizeHtml from 'sanitize-html';
 
 import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
-import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
+import { selectFeedItem, getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
 export const updateReadStatus = createAction('Update the read status of an item by id');
@@ -20,6 +20,7 @@ export function fetchFeedItems(limit, offset, feedId) {
 		apiFetchFeedItems(limit, offset, options)
 		.then((response) => {
 			dispatch(addFeedItems(response.feed_items));
+			dispatch(selectFeedItem(response.feed_items[1].feed_item_id));
 		});
 	}
 }
@@ -46,7 +47,13 @@ export default createReducer({
 				result[feedItem.feed_item_id] = {
 					...feedItem,
 					summary,
-					body: sanitizeHtml(feedItem.body, {allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])}),
+					body: sanitizeHtml(feedItem.body, {
+						allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
+						allowedAttributes: {
+							...sanitizeHtml.defaults.allowedAttributes,
+							iframe: ['src', 'width', 'height']
+						},
+					}),
 				};
 				return result;
 			}, {}

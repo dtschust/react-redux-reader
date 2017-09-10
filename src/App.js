@@ -8,6 +8,7 @@ import { fetchSubscriptions } from './redux/reducers/subscriptions-store';
 
 import SubList from './components/sub-list';
 import FeedList from './components/feed-list';
+import StoryContainer from './components/story-container';
 
 import logo from './logo.svg';
 import './App.css';
@@ -24,6 +25,7 @@ class App extends Component {
 				<div>
 					<SubList />
 					<FeedList />
+					<StoryContainer />
 				</div>
 			</Provider>
 		);

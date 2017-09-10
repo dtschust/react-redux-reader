@@ -6,7 +6,7 @@ import { getCountForFeed } from '../redux/reducers/feed-items-store';
 
 import BaseSubListItem from './base-sub-list-item';
 
-function mapDispatchToProps(state) {
+function mapStateToProps(state) {
 	const show = getShowFilter(state);
 
 	const title = show === SHOW_UNREAD ? 'Unread' : 'All';
@@ -17,4 +17,4 @@ function mapDispatchToProps(state) {
 	};
 }
 
-export default connect(mapDispatchToProps)(BaseSubListItem);
+export default connect(mapStateToProps)(BaseSubListItem);

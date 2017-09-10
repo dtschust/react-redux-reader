@@ -6,7 +6,7 @@ import { getCountForFeed } from '../redux/reducers/feed-items-store';
 import { getSelectedSub } from '../redux/reducers/app-state-store';
 import BaseSubListItem from './base-sub-list-item';
 
-function mapDispatchToProps(state, { id }) {
+function mapStateToProps(state, { id }) {
 	const sub = getSubscriptionById(state, id);
 	return {
 		title: sub.title,
@@ -15,4 +15,4 @@ function mapDispatchToProps(state, { id }) {
 	};
 }
 
-export default connect(mapDispatchToProps)(BaseSubListItem);
+export default connect(mapStateToProps)(BaseSubListItem);

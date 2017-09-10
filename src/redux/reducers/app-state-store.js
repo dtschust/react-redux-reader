@@ -45,6 +45,6 @@ export function getSelectedSub(state) {
 	return state && state.appState && state.appState.selectedSub;
 }
 
-export function getSelectedFeedItem(state) {
+export function getSelectedFeedItemId(state) {
 	return state && state.appState && state.appState.selectedFeedItem;
 }

@@ -17,7 +17,7 @@ a {
 
 #sub-list {
   padding: 30px 0;
-  width: 200px;
+  width: 250px;
   background: #4d4c4d;
   color: #e6e5e6;
 }
@@ -35,4 +35,8 @@ a {
   overflow: scroll;
   background: #F8F7F5;
   padding: 60px 100px;
+}
+
+.story-view img {
+  max-width: 100%;
 }

@@ -4,21 +4,35 @@ body {
   font-family: sans-serif;
 }
 
+a {
+  color: #42413f;
+  font-weight: bold;
+}
+
 #app {
   display: flex;
   height: 100vh;
+  color: #42413f;
 }
 
 #sub-list {
+  padding: 30px 0;
   width: 200px;
+  background: #4d4c4d;
+  color: #e6e5e6;
 }
 
 #feed-list {
+  padding: 30px 0;
   flex: 2;
   overflow: scroll;
+  background: #F9F8F4;
+  border-right: 1px solid #DDDCD8;
 }
 
 #story-container {
   flex: 3;
   overflow: scroll;
+  background: #F8F7F5;
+  padding: 60px 100px;
 }

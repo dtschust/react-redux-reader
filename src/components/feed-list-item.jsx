@@ -17,12 +17,26 @@ function BaseFeedListItem({
 } = {}) {
 	return (
 		<div
-			style={{ backgroundColor: isActive ? 'blue': undefined }}
+			style={{
+				backgroundColor: isActive ? '#f0eee8': undefined,
+				borderBottom: '1px solid #e6e4de',
+				padding: '10px 20px',
+				cursor: 'pointer',
+			}}
 			onClick={() => {selectFeedItem(id)}}
 		>
-			<div>{feed_name} (about {moment(published_at * 1000).fromNow()})</div>
+			<div style={{ color: '#919190', fontSize: '14px', padding: '5px 0' }}>
+				{feed_name}
+				<span style={{float: 'right'}}>(about {moment(published_at * 1000).fromNow()})</span>
+			</div>
 			<div style={{ fontWeight: read ? 'normal': 'bold' }}>{title}</div>
-			<div dangerouslySetInnerHTML={{__html: summary}} />
+			<div style={{
+				color: '#919190',
+				fontSize: '14',
+				overflow: 'hidden',
+				textOverflow: 'ellipsis',
+				whiteSpace: 'nowrap',
+			}} dangerouslySetInnerHTML={{__html: summary}} />
 		</div>
 	)
 

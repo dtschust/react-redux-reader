@@ -16,6 +16,9 @@ function mapStateToProps(state) {
 		title,
 		count: getCountForFeed(state, ALL_SUBSCRIPTION),
 		isActive: getSelectedSub(state) === ALL_SUBSCRIPTION,
+		style: {
+			marginBottom: '20px',
+		}
 	};
 }
 

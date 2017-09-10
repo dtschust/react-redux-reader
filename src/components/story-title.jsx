@@ -10,14 +10,17 @@ function StoryTitle({
 	feed_name,
 	author,
 	title,
+	url,
 	read,
 } = {}) {
 	return (
-		<div style={{border: '1px solid black'}}>
-			<div>{moment(published_at * 1000).calendar()}</div>
-			<h1>{title}</h1>
-			<div>{author}</div>
-			<div>{feed_name}</div>
+		<div style={{
+
+		}}>
+			<div style={{ color: '#919190' }}>{moment(published_at * 1000).calendar()}</div>
+			<h1 style={{ margin: '15px 0' }}><a style={{ textDecoration: 'none', fontSize: '42px' }} href={url} target='_blank'>{title}</a></h1>
+			<div style={{ color: '#919190' }}>{author}</div>
+			<div style={{ color: '#919190' }}>{feed_name}</div>
 		</div>
 	)
 }

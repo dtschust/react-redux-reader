@@ -25,13 +25,20 @@ export function fetchFeedItems(limit, offset, feedId) {
 	}
 }
 
-export function setReadStatus(id, read) {
-	return (dispatch) => {
+export function toggleReadStatus(id) {
+	return (dispatch, getState) => {
+		const read = !getFeedItem(getState(), id).read;
 		apiUpdateFeedItem(id, { read }).then(({ result } = {}) => {
 			if (result === 'success') {
 				dispatch(updateReadStatus({ id, read }));
 			}
 		});
+	}
+}
+
+export function openFeedItemInBrowser(id) {
+	return (dispatch, getState) => {
+		window.open(getFeedItem(getState(), id).url, '_blank');
 	}
 }
 
@@ -108,13 +115,22 @@ export function getFeedItemIdsForSelectedSub(state) {
 }
 
 function getFeedItemsForSub(state, sub) {
+	const pendingCleanup = state.pendingCleanup;
 	let matchingFeeds = state.feedItems;
 	if (sub !== ALL_SUBSCRIPTION) {
 		matchingFeeds = _.filter(state.feedItems, { feed_id: parseInt(sub, 10) });
 	}
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
-		matchingFeeds = _.filter(matchingFeeds, { read: false });
+		matchingFeeds = _.filter(matchingFeeds, (feed) => {
+			if (!feed.read) {
+				return true;
+			}
+			if (pendingCleanup[feed.feed_item_id]) {
+				return true
+			}
+			return false;
+		});
 	}
 
 	return matchingFeeds;

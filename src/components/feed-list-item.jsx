@@ -14,9 +14,9 @@ function BaseFeedListItem({
 	isActive,
 } = {}) {
 	return (
-		<div>
+		<div style={{ backgroundColor: isActive ? 'blue': undefined }}>
 			<div>{feed_name} (about {moment(published_at * 1000).fromNow()})</div>
-			<div>{title}</div>
+			<div style={{ fontWeight: read ? 'normal': 'bold' }}>{title}</div>
 			<div dangerouslySetInnerHTML={{__html: summary}} />
 		</div>
 	)

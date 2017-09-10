@@ -6,7 +6,7 @@ export default function({
 	isActive,
 }) {
 	return (
-		<div>
+		<div style={{ backgroundColor: isActive ? 'blue': undefined }}>
 			<h3>{title} ({count})</h3>
 		</div>
 	)

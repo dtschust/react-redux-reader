@@ -9,8 +9,8 @@ export default createReducer({
 	[cleanup]: (state, payload) => {
 		return initialState;
 	},
-	[updateReadStatus]: (state, { id, isRead } = {}) => {
-		if (isRead) {
+	[updateReadStatus]: (state, { id, read } = {}) => {
+		if (read) {
 			return {
 				...state,
 				[id]: true,

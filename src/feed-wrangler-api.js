@@ -30,12 +30,20 @@ export function apiFetchFeedItems(limit, offset, options = {}) {
 	return fetch(url).then(response => response.json());
 };
 
-export function apiUpdateFeedItem() {
+export function apiUpdateFeedItem(id, options = {}) {
+	let url = `${API_ENDPOINT}/feed_items/list?access_token=${ACCESS_TOKEN}&feed_item_id=${id}`;
+
+	if (!_.isUndefined(options.read)) {
+		url += `&read=${options.read}`;
+	}
+
+	return fetch(URL, { method: 'post' }).then(response => response.json());
+});
 
 };
 
 export function apiFetchSubscriptions() {
-	let url = `${API_ENDPOINT}/subscriptions/list?access_token=${ACCESS_TOKEN}`;
+	const url = `${API_ENDPOINT}/subscriptions/list?access_token=${ACCESS_TOKEN}`;
 
 	return fetch(url).then(response => response.json());
 };

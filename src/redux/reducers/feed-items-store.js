@@ -1,11 +1,11 @@
 import { createAction, createReducer } from 'redux-act';
 import sanitizeHtml from 'sanitize-html';
 
-import { apiFetchFeedItems } from '../../feed-wrangler-api';
+import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
 import { SHOW_UNREAD } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
-export const updateReadStatus = createAction('Update the read status of an item by id');
+const updateReadStatus = createAction('Update the read status of an item by id');
 
 export function fetchFeedItems(limit, offset, feedId) {
 	return (dispatch, getState) => {
@@ -19,6 +19,16 @@ export function fetchFeedItems(limit, offset, feedId) {
 		apiFetchFeedItems(limit, offset, options)
 		.then((response) => {
 			dispatch(addFeedItems(response.feed_items));
+		});
+	}
+}
+
+export function setReadStatus(id, read) {
+	return (dispatch) => {
+		apiUpdateFeedItem(id, { read }).then(({ result } = {}) => {
+			if (result === 'success') {
+				dispatch(updateReadStatus({ id, read }));
+			}
 		});
 	}
 }
@@ -41,15 +51,15 @@ export default createReducer({
 			...updates,
 		}
 	},
-	[updateReadStatus]: (state, { id, isRead } = {}) => {
-		if (!id || !state[id] || state[id].read === isRead) {
+	[updateReadStatus]: (state, { id, read } = {}) => {
+		if (!id || !state[id] || state[id].read === read) {
 			return state;
 		}
 		return {
 			...state,
 			[id]: {
 				...state[id],
-				read: isRead,
+				read,
 			}
 		}
 	},

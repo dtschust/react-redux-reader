@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 import { getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { getFeedItem } from '../redux/reducers/feed-items-store';

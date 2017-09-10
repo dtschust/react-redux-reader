@@ -10,13 +10,14 @@ import SubList from './components/sub-list';
 import FeedList from './components/feed-list';
 import StoryContainer from './components/story-container';
 
-import logo from './logo.svg';
 import './App.css';
 
 const store = configureStore();
 
-store.dispatch(fetchFeedItems());
-store.dispatch(fetchSubscriptions());
+export const readyPromise = Promise.all([
+	store.dispatch(fetchFeedItems()),
+	store.dispatch(fetchSubscriptions()),
+]);
 
 class App extends Component {
 	render() {

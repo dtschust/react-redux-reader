@@ -8,7 +8,7 @@ export const updateSubscriptions = createAction('Update subscriptions');
 
 export function fetchSubscriptions() {
 	return (dispatch) => {
-		apiFetchSubscriptions()
+		return apiFetchSubscriptions()
 		.then((response) => {
 			dispatch(updateSubscriptions(response.feeds));
 		});
@@ -39,5 +39,5 @@ export function getSubscriptionById(state, id) {
 
 export function getUnreadSubscriptionIds(state) {
 	const unreadSubscriptionIds = _.uniq(_.map(_.filter(getAllFeedItems(state), { read: false }), 'feed_id'));
-	return _.sortBy(unreadSubscriptionIds, (id) => getSubscriptionById(state, id).title.toLowerCase());
+	return _.sortBy(unreadSubscriptionIds, (id) => _.get(getSubscriptionById(state, id), 'title', '').toLowerCase());
 }

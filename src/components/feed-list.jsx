@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
-import { selectFeedItem, getShowFilter, getSelectedSub, getSelectedFeedItemId, SHOW_UNREAD } from '../redux/reducers/app-state-store';
+import { selectFeedItem, getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { openFeedItemInBrowser, toggleReadStatus, getFeedItemIdsForSelectedSub } from '../redux/reducers/feed-items-store';
 import { cleanup } from '../redux/reducers/pending-cleanup-store';
 

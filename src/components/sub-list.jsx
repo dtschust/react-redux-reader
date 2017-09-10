@@ -4,6 +4,7 @@ import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
 import { getAllSubscriptionIds, getUnreadSubscriptionIds } from '../redux/reducers/subscriptions-store';
+import { fetchFeedItems } from '../redux/reducers/feed-items-store';
 import { selectSub, getSelectedSub, getShowFilter, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
 import SubListItem from './sub-list-item';
 import AllSubListItem from './all-sub-list-item';
@@ -15,12 +16,15 @@ class SubList extends Component {
 			n: this.nextSub.bind(this),
 			p: this.prevSub.bind(this),
 		};
+		this.fetchFeedItems = this.fetchFeedItems.bind(this);
 	}
+
 	componentDidMount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.bind(shortcut, cb);
 		})
 	}
+
 	componentWillUnmount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.unbind(shortcut, cb);
@@ -61,15 +65,26 @@ class SubList extends Component {
 		selectSub(idToScrollTo);
 		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
+
+	fetchFeedItems(e) {
+		e.preventDefault();
+		this.props.fetchFeedItems();
+	}
+
 	render() {
 		return (
 			<div id="sub-list">
-				<AllSubListItem />
-				{this.props.subscriptionIds.map(
-					id => {
-						return <SubListItem id={id} key={id} />
-					}
-				)}
+				<div>
+					<AllSubListItem />
+					{this.props.subscriptionIds.map(
+						id => {
+							return <SubListItem id={id} key={id} />
+						}
+					)}
+				</div>
+				<button style={{ marginTop: 'auto', padding: '10px 0' }} onClick={this.fetchFeedItems}>
+					Refresh
+				</button>
 			</div>
 		);
 	}
@@ -86,7 +101,8 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-	selectSub
+	selectSub,
+	fetchFeedItems,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubList);

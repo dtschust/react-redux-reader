@@ -3,7 +3,7 @@ import { createAction, createReducer } from 'redux-act';
 import sanitizeHtml from 'sanitize-html';
 
 import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
-import { selectFeedItem, getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
+import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
 export const updateReadStatus = createAction('Update the read status of an item by id');
@@ -17,7 +17,7 @@ export function fetchFeedItems(limit, offset, feedId) {
 			feedId,
 			read,
 		}
-		apiFetchFeedItems(limit, offset, options)
+		return apiFetchFeedItems(limit, offset, options)
 		.then((response) => {
 			dispatch(addFeedItems(response.feed_items));
 		});

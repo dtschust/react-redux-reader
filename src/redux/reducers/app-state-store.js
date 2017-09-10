@@ -44,3 +44,7 @@ export function getShowFilter(state) {
 export function getSelectedSub(state) {
 	return state && state.appState && state.appState.selectedSub;
 }
+
+export function getSelectedFeedItem(state) {
+	return state && state.appState && state.appState.selectedFeedItem;
+}

@@ -54,7 +54,7 @@ class SubList extends Component {
 	}
 	render() {
 		return (
-			<div>
+			<div id="sub-list">
 				<AllSubListItem />
 				{this.props.subscriptionIds.map(
 					id => {

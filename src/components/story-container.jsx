@@ -5,7 +5,7 @@ import StoryView from './story-view';
 
 export default function() {
 	return (
-		<div>
+		<div id="story-container">
 			<StoryTitle />
 			<StoryView />
 		</div>

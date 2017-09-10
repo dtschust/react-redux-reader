@@ -76,7 +76,7 @@ class FeedList extends Component {
 
 	render() {
 		return (
-			<div>
+			<div id="feed-list">
 				{this.props.feedIds.map(
 					id => {
 						return <FeedListItem id={id} key={id} />

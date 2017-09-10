@@ -3,3 +3,22 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+#sub-list {
+  width: 200px;
+}
+
+#feed-list {
+  flex: 2;
+  overflow: scroll;
+}
+
+#story-container {
+  flex: 3;
+  overflow: scroll;
+}

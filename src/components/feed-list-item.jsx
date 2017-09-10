@@ -33,7 +33,7 @@ function BaseFeedListItem({
 			<div style={{ fontWeight: read ? 'normal': 'bold', padding: '5px 0' }}>{title}</div>
 			<div style={{
 				color: '#919190',
-				fontSize: '14',
+				fontSize: '14px',
 				overflow: 'hidden',
 				textOverflow: 'ellipsis',
 				whiteSpace: 'nowrap',

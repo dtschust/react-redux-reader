@@ -31,16 +31,18 @@ export function apiFetchFeedItems(limit, offset, options = {}) {
 };
 
 export function apiUpdateFeedItem(id, options = {}) {
-	// let url = `${API_ENDPOINT}/feed_items/list?access_token=${ACCESS_TOKEN}&feed_item_id=${id}`;
+	let url = `${API_ENDPOINT}/feed_items/update?access_token=${ACCESS_TOKEN}&feed_item_id=${id}`;
 
-	// if (!_.isUndefined(options.read)) {
-	// 	url += `&read=${options.read}`;
-	// }
+	if (!_.isUndefined(options.read)) {
+		url += `&read=${options.read}`;
+	}
 
-	// return fetch(URL, { method: 'post' }).then(response => response.json());
-	return Promise.resolve({
-		result: 'success',
-	});
+	return fetch(url, { method: 'post' }).then(response => response.json());
+
+	// Fake version for testing
+	// return Promise.resolve({
+	// 	result: 'success',
+	// });
 };
 
 export function apiFetchSubscriptions() {

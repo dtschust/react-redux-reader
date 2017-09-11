@@ -2,7 +2,7 @@ import { createAction, createReducer } from 'redux-act';
 
 export const selectSub = createAction('Select a subscription, or ALL or undefined');
 export const selectFeedItem = createAction('Select a feed item by id');
-export const updateShowFilter = createAction('Change the filter to show ALL or UNREAD');
+export const toggleShowFilter = createAction('Change the filter to show ALL or UNREAD');
 
 export const ALL_SUBSCRIPTION = 'ALL_SUBSCRIPTION';
 
@@ -28,10 +28,10 @@ export default createReducer({
 		}
 
 	},
-	[updateShowFilter]: (state, show) => {
+	[toggleShowFilter]: (state) => {
 		return {
 			...state,
-			show,
+			show: state.show === SHOW_UNREAD ? SHOW_ALL : SHOW_UNREAD,
 		}
 	},
 

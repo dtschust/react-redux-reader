@@ -16,8 +16,6 @@ a {
 }
 
 #sub-list {
-  overflow: scroll;
-  padding: 30px 0 0;
   width: 250px;
   background: #4d4c4d;
   color: #e6e5e6;
@@ -28,14 +26,14 @@ a {
 #feed-list {
   padding: 30px 0;
   flex: 2;
-  overflow: scroll;
+  overflow: auto;
   background: #F9F8F4;
   border-right: 1px solid #DDDCD8;
 }
 
 #story-container {
   flex: 3;
-  overflow: scroll;
+  overflow: auto;
   background: #F8F7F5;
   padding: 60px 100px;
 }

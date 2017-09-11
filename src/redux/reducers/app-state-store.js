@@ -3,6 +3,7 @@ import { createAction, createReducer } from 'redux-act';
 export const selectSub = createAction('Select a subscription, or ALL or undefined');
 export const selectFeedItem = createAction('Select a feed item by id');
 export const toggleShowFilter = createAction('Change the filter to show ALL or UNREAD');
+export const updateSyncingState = createAction('Start or stop syncing');
 
 export const ALL_SUBSCRIPTION = 'ALL_SUBSCRIPTION';
 
@@ -13,6 +14,7 @@ const initialState = {
 	selectedSub: ALL_SUBSCRIPTION,
 	selectedFeedItem: undefined,
 	show: SHOW_UNREAD,
+	syncing: false,
 }
 export default createReducer({
 	[selectSub]: (state, id) => {
@@ -27,6 +29,12 @@ export default createReducer({
 			selectedFeedItem: id,
 		}
 
+	},
+	[updateSyncingState]: (state, syncing) => {
+		return {
+			...state,
+			syncing,
+		}
 	},
 	[toggleShowFilter]: (state) => {
 		return {
@@ -47,4 +55,8 @@ export function getSelectedSub(state) {
 
 export function getSelectedFeedItemId(state) {
 	return state && state.appState && state.appState.selectedFeedItem;
+}
+
+export function getSyncingStatus(state) {
+	return state && state.appState && state.appState.syncing;
 }

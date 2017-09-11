@@ -8,7 +8,7 @@ import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './
 export const addFeedItems = createAction('Add feed items');
 export const updateReadStatus = createAction('Update the read status of an item by id');
 
-export function fetchFeedItems(limit, offset, feedId) {
+function fetchFeedItems(limit, offset, feedId) {
 	return (dispatch, getState) => {
 		const read = getShowFilter(getState()) === SHOW_UNREAD ?
 			false :

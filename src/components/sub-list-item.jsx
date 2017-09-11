@@ -9,7 +9,7 @@ function mapStateToProps(state, { id }) {
 	const sub = getSubscriptionById(state, id);
 	return {
 		id,
-		title: sub.title,
+		title: sub && sub.title,
 		count: getCountForFeed(state, id),
 		isActive: getSelectedSub(state) === id,
 	};

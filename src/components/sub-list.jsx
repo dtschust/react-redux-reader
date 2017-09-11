@@ -4,8 +4,8 @@ import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
 import { getAllSubscriptionIds, getUnreadSubscriptionIds } from '../redux/reducers/subscriptions-store';
-import { fetchFeedItems } from '../redux/reducers/feed-items-store';
-import { toggleShowFilter, selectSub, getSelectedSub, getShowFilter, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
+import { toggleShowFilter, selectSub, getSelectedSub, getShowFilter, getSyncingStatus, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
+import sync from '../redux/sync';
 import SubListItem from './sub-list-item';
 import AllSubListItem from './all-sub-list-item';
 
@@ -16,7 +16,7 @@ class SubList extends Component {
 			n: this.nextSub.bind(this),
 			p: this.prevSub.bind(this),
 		};
-		this.fetchFeedItems = this.fetchFeedItems.bind(this);
+		this.sync = this.sync.bind(this);
 		this.toggleShowFilter = this.toggleShowFilter.bind(this);
 	}
 
@@ -67,9 +67,9 @@ class SubList extends Component {
 		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
 	}
 
-	fetchFeedItems(e) {
+	sync(e) {
 		e.preventDefault();
-		this.props.fetchFeedItems();
+		this.props.sync();
 	}
 
 	toggleShowFilter(e) {
@@ -91,8 +91,8 @@ class SubList extends Component {
 				<button style={{ marginTop: 'auto', padding: '10px 0' }} onClick={this.toggleShowFilter}>
 					Show {this.props.showFilter === SHOW_UNREAD ? 'All' : 'Unread Only'}
 				</button>
-				<button style={{ padding: '10px 0' }} onClick={this.fetchFeedItems}>
-					Sync
+				<button style={{ padding: '10px 0' }} onClick={this.sync}>
+					{this.props.syncing ? 'Syncing...' : 'Sync'}
 				</button>
 			</div>
 		);
@@ -107,13 +107,14 @@ function mapStateToProps(state) {
 			getAllSubscriptionIds(state),
 		selectedSubscriptionId: getSelectedSub(state),
 		showFilter: getShowFilter(state),
+		syncing: getSyncingStatus(state),
 
 	};
 }
 
 const mapDispatchToProps = {
 	selectSub,
-	fetchFeedItems,
+	sync,
 	toggleShowFilter,
 }
 

@@ -50,3 +50,53 @@ export function apiFetchSubscriptions() {
 
 	return fetch(url).then(response => response.json());
 };
+
+export function apiFetchFeedItemsByIds(ids) {
+	let url = `${API_ENDPOINT}/feed_items/get?access_token=${ACCESS_TOKEN}`;
+
+	url += `&feed_item_ids=${ids.join(',')}`
+
+	return fetch(url).then(response => response.json().then(({feed_items}) => feed_items));
+}
+
+export function apiFetchAllUnreadIds(offset = 0) {
+	let url = `${API_ENDPOINT}/feed_items/list_ids?access_token=${ACCESS_TOKEN}`;
+
+	url += '&read=false';
+	url += '&limit=1000';
+
+	if (offset > 0) {
+		url += `&offset=${offset}`
+	}
+
+	return fetch(url).then(response => response.json()).then(({ feed_items: feedItems }) => {
+		if (feedItems.length === 1000) {
+			// fetch more
+			return apiFetchAllUnreadIds(offset + 1000).then((newFeedItems) => {
+				return feedItems.concat(newFeedItems);
+			})
+		}
+		return feedItems;
+	});
+}
+
+export function apiFetchLastNDaysOfFeedItems(numDays, offset = 0) {
+	let url = `${API_ENDPOINT}/feed_items/list?access_token=${ACCESS_TOKEN}`;
+
+	url += '&limit=100';
+	url += `&created_since=${Math.floor(Date.now()/1000) - ( numDays * 60 * 60 * 24 )}`;
+
+	if (offset > 0) {
+		url += `&offset=${offset}`
+	}
+
+	return fetch(url).then(response => response.json()).then(({ feed_items: feedItems }) => {
+		if (feedItems.length === 100) {
+			// fetch more
+			return apiFetchLastNDaysOfFeedItems(numDays, offset + 100).then((newFeedItems) => {
+				return feedItems.concat(newFeedItems);
+			})
+		}
+		return feedItems;
+	});
+}

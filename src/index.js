@@ -1,10 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App, { readyPromise } from './App';
-// import registerServiceWorker from './registerServiceWorker';
+import App from './App';
 
-readyPromise.then(() => {
-	ReactDOM.render(<App />, document.getElementById('root'));
-})
-// registerServiceWorker();
+ReactDOM.render(<App />, document.getElementById('root'));

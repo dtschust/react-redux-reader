@@ -3,8 +3,7 @@ import { Provider } from 'react-redux';
 
 import configureStore from './redux/configure-store';
 
-import { fetchFeedItems } from './redux/reducers/feed-items-store';
-import { fetchSubscriptions } from './redux/reducers/subscriptions-store';
+import sync from './redux/sync';
 
 import SubList from './components/sub-list';
 import FeedList from './components/feed-list';
@@ -14,10 +13,7 @@ import './App.css';
 
 const store = configureStore();
 
-export const readyPromise = Promise.all([
-	store.dispatch(fetchFeedItems()),
-	store.dispatch(fetchSubscriptions()),
-]);
+store.dispatch(sync());
 
 class App extends Component {
 	render() {

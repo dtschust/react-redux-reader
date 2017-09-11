@@ -13,6 +13,9 @@ function StoryTitle({
 	url,
 	read,
 } = {}) {
+	if (!title) {
+		return false;
+	}
 	return (
 		<div style={{
 

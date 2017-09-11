@@ -7,6 +7,9 @@ import { getFeedItem } from '../redux/reducers/feed-items-store';
 function StoryView({
 	body,
 } = {}) {
+	if (!body) {
+		return false;
+	}
 	return (
 		<div className='story-view' style={{
 			padding: '50px 0px',

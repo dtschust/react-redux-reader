@@ -2,8 +2,10 @@
   "name": "react-redux-reader",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://dtschust.github.io/react-redux-reader",
   "dependencies": {
     "classnames": "^2.2.5",
+    "gh-pages": "^1.0.0",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "mousetrap": "^1.6.1",
@@ -17,6 +19,8 @@
     "sanitize-html": "^1.14.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

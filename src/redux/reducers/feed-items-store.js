@@ -24,6 +24,13 @@ export function fetchFeedItems(limit, offset, feedId) {
 	}
 }
 
+export function fetchFeedItemsForSub(subscriptionId) {
+	return (dispatch) => {
+		debugger;
+		return dispatch(fetchFeedItems(undefined, undefined, subscriptionId));
+	}
+}
+
 export function toggleReadStatus(id) {
 	return (dispatch, getState) => {
 		const read = !getFeedItem(getState(), id).read;

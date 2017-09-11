@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
-import { selectFeedItem, getSelectedFeedItemId } from '../redux/reducers/app-state-store';
-import { openFeedItemInBrowser, toggleReadStatus, getFeedItemIdsForSelectedSub } from '../redux/reducers/feed-items-store';
+import { selectFeedItem, getSelectedFeedItemId, getSelectedSub, getShowFilter, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
+import { openFeedItemInBrowser, toggleReadStatus, getFeedItemIdsForSelectedSub, fetchFeedItemsForSub } from '../redux/reducers/feed-items-store';
 import { cleanup } from '../redux/reducers/pending-cleanup-store';
 
 import FeedListItem from './feed-list-item';
@@ -20,6 +20,7 @@ class FeedList extends Component {
 			c: this.cleanup.bind(this),
 			escape: this.unselectItem.bind(this),
 		};
+		this.fetchFeedsForActiveSub = this.fetchFeedsForActiveSub.bind(this);
 	}
 	componentDidMount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
@@ -82,7 +83,26 @@ class FeedList extends Component {
 		this.props.selectFeedItem(undefined);
 	}
 
+	fetchFeedsForActiveSub(e) {
+		e.preventDefault();
+		this.props.fetchFeedItemsForSub(this.props.selectedSubId);
+	}
+
 	render() {
+		if (
+			this.props.feedIds.length === 0 &&
+			this.props.showFilter !== SHOW_UNREAD &&
+			this.props.selectedFeedId !== ALL_SUBSCRIPTION
+		) {
+			return (
+				<div id="feed-list">
+					Nothing here, want me to fetch something for you?
+					<div>
+						<button onClick={this.fetchFeedsForActiveSub}>Yes please!</button>
+					</div>
+				</div>
+			)
+		}
 		return (
 			<div id="feed-list">
 				{this.props.feedIds.map(
@@ -99,6 +119,8 @@ function mapStateToProps(state) {
 	return {
 		feedIds: getFeedItemIdsForSelectedSub(state),
 		selectedFeedId: getSelectedFeedItemId(state),
+		selectedSubId: getSelectedSub(state),
+		showFilter: getShowFilter(state),
 	};
 }
 
@@ -107,6 +129,7 @@ const mapDispatchToProps = {
 	selectFeedItem,
 	toggleReadStatus,
 	cleanup,
+	fetchFeedItemsForSub,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedList);

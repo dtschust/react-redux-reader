@@ -70,13 +70,14 @@ export function apiFetchAllUnreadIds(offset = 0) {
 	}
 
 	return fetch(url).then(response => response.json()).then(({ feed_items: feedItems }) => {
-		if (feedItems.length === 1000) {
+		const feedItemIds = _.map(feedItems, ({feed_item_id}) => feed_item_id.toString());
+		if (feedItemIds.length === 1000) {
 			// fetch more
 			return apiFetchAllUnreadIds(offset + 1000).then((newFeedItems) => {
-				return feedItems.concat(newFeedItems);
+				return feedItemIds.concat(newFeedItems);
 			})
 		}
-		return feedItems;
+		return feedItemIds;
 	});
 }
 

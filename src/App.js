@@ -15,6 +15,11 @@ const store = configureStore();
 
 store.dispatch(sync());
 
+// Sync every five minutes
+setInterval(() => {
+	store.dispatch(sync());
+}, 5 * 60 * 1000)
+
 class App extends Component {
 	render() {
 		return (

@@ -24,8 +24,8 @@ export default function sync() {
 
 			const idsToFetch = _.uniq(
 				_.difference(
-					_.map(knownFeedItemIds.concat(unreadIds), 'feed_item_id'),
-					_.map(allStories, 'feed_item_id'),
+					_.uniq(knownFeedItemIds.concat(unreadIds)),
+					_.map(allStories, ({feed_item_id}) => feed_item_id.toString()),
 				)
 			)
 

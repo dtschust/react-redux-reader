@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import configureStore from './redux/configure-store';
 
 import sync from './redux/sync';
+import { updateTimestampNonce } from './redux/reducers/app-state-store';
 
 import SubList from './components/sub-list';
 import FeedList from './components/feed-list';
@@ -19,6 +20,11 @@ store.dispatch(sync());
 setInterval(() => {
 	store.dispatch(sync());
 }, 5 * 60 * 1000)
+
+// Update timestamps every minute
+setInterval(() => {
+	store.dispatch(updateTimestampNonce());
+}, 60 * 1000)
 
 class App extends Component {
 	render() {

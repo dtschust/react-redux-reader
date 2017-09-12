@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 import { getFeedItem } from '../redux/reducers/feed-items-store';
 import { selectFeedItem, getSelectedFeedItemId } from '../redux/reducers/app-state-store';
+
+import Timestamp from './timestamp';
 
 function BaseFeedListItem({
 	id,
@@ -28,7 +29,7 @@ function BaseFeedListItem({
 		>
 			<div style={{ color: '#919190', fontSize: '12px', padding: '5px 0 0' }}>
 				{feed_name}
-				<span style={{float: 'right'}}>about {moment(published_at * 1000).fromNow()}</span>
+				<Timestamp style={{ float: 'right' }} time={published_at * 1000} approximate />
 			</div>
 			<div style={{ fontWeight: read ? 'normal': 'bold', padding: '5px 0' }}>{title}</div>
 			<div style={{

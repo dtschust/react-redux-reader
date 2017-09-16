@@ -5,8 +5,7 @@ const API_ENDPOINT = 'http://fw-proxy.herokuapp.com/api/v2';
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
 export function apiAuth(email, password) {
-	// TODO: come up with a client key
-	let url = `${API_ENDPOINT}/users/authorize/?email=${encodeURI(email)}&password=${encodeURI(password)}&client_key=client_key`;
+	let url = `${API_ENDPOINT}/users/authorize/?email=${encodeURI(email)}&password=${encodeURI(password)}&client_key=56b3890c6f9a8a2ce48dcb20b4101434`;
 	fetch(url).then(response => response.json()).then(({access_token}) => {
 		localStorage.setItem('accessToken', access_token);
 		window.location.reload();

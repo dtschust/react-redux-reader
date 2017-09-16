@@ -9,17 +9,22 @@ import { updateTimestampNonce } from './redux/reducers/app-state-store';
 import SubList from './components/sub-list';
 import FeedList from './components/feed-list';
 import StoryContainer from './components/story-container';
+import LoginForm from './components/login-form';
 
 import './App.css';
 
-const store = configureStore();
+let store;
+const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
-store.dispatch(sync());
-
-// Sync every five minutes
-setInterval(() => {
+if (ACCESS_TOKEN) {
+	store = configureStore();
 	store.dispatch(sync());
-}, 5 * 60 * 1000)
+
+	// Sync every five minutes
+	setInterval(() => {
+		store.dispatch(sync());
+	}, 5 * 60 * 1000)
+}
 
 // Update timestamps every minute
 setInterval(() => {
@@ -28,6 +33,9 @@ setInterval(() => {
 
 class App extends Component {
 	render() {
+		if (!ACCESS_TOKEN) {
+			return <LoginForm/>
+		}
 		return (
 			<Provider store={store}>
 				<div id="app">

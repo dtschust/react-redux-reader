@@ -4,6 +4,16 @@ const API_ENDPOINT = 'http://fw-proxy.herokuapp.com/api/v2';
 
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
+export function apiAuth(email, password) {
+	// TODO: come up with a client key
+	let url = `${API_ENDPOINT}/users/authorize/?email=${encodeURI(email)}&password=${encodeURI(password)}&client_key=client_key`;
+	fetch(url).then(response => response.json()).then(({access_token}) => {
+		localStorage.setItem('accessToken', access_token);
+		window.location.reload();
+	})
+
+}
+
 export function apiFetchFeedItems(limit, offset, options = {}) {
 	let url = `${API_ENDPOINT}/feed_items/list?access_token=${ACCESS_TOKEN}`;
 

@@ -111,7 +111,12 @@ export function getFeedItem(state, id) {
 }
 
 export function getCountForFeed(state, id) {
-	return Object.keys(getFeedItemsForSub(state, id)).length;
+	let feedItems = getFeedItemsForSub(state, id);
+
+	if (getShowFilter(state) === SHOW_UNREAD) {
+		feedItems = _.filter(feedItems, { read: false })
+	}
+	return Object.keys(feedItems).length;
 }
 
 export function getFeedItemIdsForSelectedSub(state) {

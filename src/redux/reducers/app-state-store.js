@@ -1,4 +1,5 @@
 import { createAction, createReducer } from 'redux-act';
+import { REHYDRATE } from 'redux-persist/constants'
 
 export const selectSub = createAction('Select a subscription, or ALL or undefined');
 export const selectFeedItem = createAction('Select a feed item by id');
@@ -19,6 +20,13 @@ const initialState = {
 	timestampNonce: Date.now(),
 }
 export default createReducer({
+	[REHYDRATE]: (state, payload) => {
+		// Syncing state will not be updated from persistence
+		return {
+			...payload.appState,
+			syncing: state.syncing
+		};
+	},
 	[selectSub]: (state, id) => {
 		return {
 			...state,

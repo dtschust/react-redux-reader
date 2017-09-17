@@ -14,7 +14,5 @@ export default function configureStore(reducers, middleware = [ ReduxThunk ]) {
 
 	persistStore(store);
 
-	window.redux = store;
-
 	return store;
 }

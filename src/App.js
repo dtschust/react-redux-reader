@@ -17,8 +17,10 @@ let store;
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
 if (ACCESS_TOKEN) {
-	store = configureStore();
-	store.dispatch(sync());
+	store = configureStore(() => {
+		// Sync after store has been hydrated
+		store.dispatch(sync());
+	});
 
 	// Sync every five minutes
 	setInterval(() => {

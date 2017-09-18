@@ -5,14 +5,15 @@ import ReduxThunk from 'redux-thunk';
 
 import reducer from './root-reducer';
 
-export default function configureStore(reducers, middleware = [ ReduxThunk ]) {
+export default function configureStore(postHydrateCb) {
+	const middleware = [ ReduxThunk ];
 	const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 	const store = createStore(reducer, composeEnhancers(
 		applyMiddleware(...middleware),
 		autoRehydrate(),
 	));
 
-	persistStore(store);
+	persistStore(store, undefined, postHydrateCb);
 
 	return store;
 }

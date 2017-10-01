@@ -9,5 +9,5 @@ export default function() {
 			<StoryTitle />
 			<StoryView />
 		</div>
-	)
+	);
 }

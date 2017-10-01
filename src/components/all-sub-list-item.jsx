@@ -1,6 +1,11 @@
 import { connect } from 'react-redux';
 
-import { getSelectedSub, getShowFilter, ALL_SUBSCRIPTION, SHOW_UNREAD } from '../redux/reducers/app-state-store';
+import {
+	getSelectedSub,
+	getShowFilter,
+	ALL_SUBSCRIPTION,
+	SHOW_UNREAD,
+} from '../redux/reducers/app-state-store';
 import { getCountForFeed } from '../redux/reducers/feed-items-store';
 import { selectSub } from '../redux/reducers/app-state-store';
 
@@ -17,12 +22,12 @@ function mapStateToProps(state) {
 		isActive: getSelectedSub(state) === ALL_SUBSCRIPTION,
 		style: {
 			marginBottom: '20px',
-		}
+		},
 	};
 }
 
 const mapDispatchToProps = {
-	selectSub
-}
+	selectSub,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseSubListItem);

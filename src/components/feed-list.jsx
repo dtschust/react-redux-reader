@@ -3,8 +3,20 @@ import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
-import { selectFeedItem, getSelectedFeedItemId, getSelectedSub, getShowFilter, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
-import { openFeedItemInBrowser, toggleReadStatus, getFeedItemIdsForSelectedSub, fetchFeedItemsForSub } from '../redux/reducers/feed-items-store';
+import {
+	selectFeedItem,
+	getSelectedFeedItemId,
+	getSelectedSub,
+	getShowFilter,
+	SHOW_UNREAD,
+	ALL_SUBSCRIPTION,
+} from '../redux/reducers/app-state-store';
+import {
+	openFeedItemInBrowser,
+	toggleReadStatus,
+	getFeedItemIdsForSelectedSub,
+	fetchFeedItemsForSub,
+} from '../redux/reducers/feed-items-store';
 import { cleanup } from '../redux/reducers/pending-cleanup-store';
 
 import FeedListItem from './feed-list-item';
@@ -25,12 +37,12 @@ class FeedList extends Component {
 	componentDidMount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.bind(shortcut, cb);
-		})
+		});
 	}
 	componentWillUnmount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.unbind(shortcut, cb);
-		})
+		});
 	}
 
 	nextItem() {
@@ -45,7 +57,9 @@ class FeedList extends Component {
 		}
 
 		selectFeedItem(idToScrollTo);
-		document.querySelector(`#feed-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
+		document
+			.querySelector(`#feed-item-${idToScrollTo}`)
+			.scrollIntoViewIfNeeded(false);
 	}
 
 	prevItem() {
@@ -62,7 +76,9 @@ class FeedList extends Component {
 		}
 
 		selectFeedItem(idToScrollTo);
-		document.querySelector(`#feed-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
+		document
+			.querySelector(`#feed-item-${idToScrollTo}`)
+			.scrollIntoViewIfNeeded(false);
 	}
 
 	toggleRead() {
@@ -101,19 +117,17 @@ class FeedList extends Component {
 						<button onClick={this.fetchFeedsForActiveSub}>Yes please!</button>
 					</div>
 				</div>
-			)
+			);
 		}
 		return (
 			<div id="feed-list">
-				{this.props.feedIds.map(
-					id => {
-						return <FeedListItem id={id} key={id} />
-					}
-				)}
+				{this.props.feedIds.map(id => {
+					return <FeedListItem id={id} key={id} />;
+				})}
 			</div>
 		);
 	}
-};
+}
 
 function mapStateToProps(state) {
 	return {
@@ -130,7 +144,6 @@ const mapDispatchToProps = {
 	toggleReadStatus,
 	cleanup,
 	fetchFeedItemsForSub,
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedList);
-

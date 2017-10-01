@@ -4,18 +4,20 @@ import { connect } from 'react-redux';
 import { getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { getFeedItem } from '../redux/reducers/feed-items-store';
 
-function StoryView({
-	body,
-} = {}) {
+function StoryView({ body } = {}) {
 	if (!body) {
 		return false;
 	}
 	return (
-		<div className='story-view' style={{
-			padding: '50px 0px',
-			lineHeight: '1.5',
-		}} dangerouslySetInnerHTML={{__html: body}} />
-	)
+		<div
+			className="story-view"
+			style={{
+				padding: '50px 0px',
+				lineHeight: '1.5',
+			}}
+			dangerouslySetInnerHTML={{ __html: body }}
+		/>
+	);
 }
 
 function mapStateToProps(state) {

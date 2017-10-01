@@ -16,7 +16,7 @@ function mapStateToProps(state, { id }) {
 }
 
 const mapDispatchToProps = {
-	selectSub
-}
+	selectSub,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseSubListItem);

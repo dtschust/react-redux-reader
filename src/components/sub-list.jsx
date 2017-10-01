@@ -3,8 +3,19 @@ import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
-import { getAllSubscriptionIds, getUnreadSubscriptionIds } from '../redux/reducers/subscriptions-store';
-import { toggleShowFilter, selectSub, getSelectedSub, getShowFilter, getSyncingStatus, SHOW_UNREAD, ALL_SUBSCRIPTION } from '../redux/reducers/app-state-store';
+import {
+	getAllSubscriptionIds,
+	getUnreadSubscriptionIds,
+} from '../redux/reducers/subscriptions-store';
+import {
+	toggleShowFilter,
+	selectSub,
+	getSelectedSub,
+	getShowFilter,
+	getSyncingStatus,
+	SHOW_UNREAD,
+	ALL_SUBSCRIPTION,
+} from '../redux/reducers/app-state-store';
 import sync from '../redux/sync';
 import SubListItem from './sub-list-item';
 import AllSubListItem from './all-sub-list-item';
@@ -23,13 +34,13 @@ class SubList extends Component {
 	componentDidMount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.bind(shortcut, cb);
-		})
+		});
 	}
 
 	componentWillUnmount() {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.unbind(shortcut, cb);
-		})
+		});
 	}
 
 	nextSub() {
@@ -42,12 +53,14 @@ class SubList extends Component {
 			if (currentIndex >= 0 && currentIndex + 1 < subscriptionIds.length) {
 				idToScrollTo = subscriptionIds[currentIndex + 1];
 			} else {
-				idToScrollTo = ALL_SUBSCRIPTION
+				idToScrollTo = ALL_SUBSCRIPTION;
 			}
 		}
 
 		selectSub(idToScrollTo);
-		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
+		document
+			.querySelector(`#sub-item-${idToScrollTo}`)
+			.scrollIntoViewIfNeeded(false);
 	}
 
 	prevSub() {
@@ -64,7 +77,9 @@ class SubList extends Component {
 		}
 
 		selectSub(idToScrollTo);
-		document.querySelector(`#sub-item-${idToScrollTo}`).scrollIntoViewIfNeeded(false);
+		document
+			.querySelector(`#sub-item-${idToScrollTo}`)
+			.scrollIntoViewIfNeeded(false);
 	}
 
 	sync(e) {
@@ -82,13 +97,14 @@ class SubList extends Component {
 			<div id="sub-list">
 				<div style={{ overflow: 'auto', flex: '1 1 0', paddingTop: '30px' }}>
 					<AllSubListItem />
-					{this.props.subscriptionIds.map(
-						id => {
-							return <SubListItem id={id} key={id} />
-						}
-					)}
+					{this.props.subscriptionIds.map(id => {
+						return <SubListItem id={id} key={id} />;
+					})}
 				</div>
-				<button style={{ marginTop: 'auto', padding: '10px 0' }} onClick={this.toggleShowFilter}>
+				<button
+					style={{ marginTop: 'auto', padding: '10px 0' }}
+					onClick={this.toggleShowFilter}
+				>
 					Show {this.props.showFilter === SHOW_UNREAD ? 'All' : 'Unread Only'}
 				</button>
 				<button style={{ padding: '10px 0' }} onClick={this.sync}>
@@ -97,18 +113,17 @@ class SubList extends Component {
 			</div>
 		);
 	}
-};
+}
 
 function mapStateToProps(state) {
 	const showUnread = getShowFilter(state) === SHOW_UNREAD;
 	return {
-		subscriptionIds: showUnread ?
-			getUnreadSubscriptionIds(state) :
-			getAllSubscriptionIds(state),
+		subscriptionIds: showUnread
+			? getUnreadSubscriptionIds(state)
+			: getAllSubscriptionIds(state),
 		selectedSubscriptionId: getSelectedSub(state),
 		showFilter: getShowFilter(state),
 		syncing: getSyncingStatus(state),
-
 	};
 }
 
@@ -116,7 +131,6 @@ const mapDispatchToProps = {
 	selectSub,
 	sync,
 	toggleShowFilter,
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubList);
-

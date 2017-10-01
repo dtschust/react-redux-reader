@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import { apiAuth } from '../feed-wrangler-api';
 
@@ -16,23 +16,28 @@ class LoginForm extends Component {
 			<form onSubmit={this.login}>
 				<div>
 					<input
-						ref={(input) => { this.email = input; }}
-						name='email'
-						type='text'
-						placeholder='email address'/>
+						ref={input => {
+							this.email = input;
+						}}
+						name="email"
+						type="text"
+						placeholder="email address"
+					/>
 				</div>
 				<div>
 					<input
-						ref={(input) => { this.password = input; }}
-						name='password'
-						type='password'
-						placeholder='password'/>
+						ref={input => {
+							this.password = input;
+						}}
+						name="password"
+						type="password"
+						placeholder="password"
+					/>
 				</div>
-				<button type='submit'>Login</button>
+				<button type="submit">Login</button>
 			</form>
-
-		)
+		);
 	}
 }
 
-export default LoginForm
+export default LoginForm;

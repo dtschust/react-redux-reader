@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import { purgePersistor } from './redux/configure-store';
+
 const API_ENDPOINT = 'http://fw-proxy.herokuapp.com/api/v2';
 
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
@@ -9,6 +11,17 @@ export function apiAuth(email, password) {
 	fetch(url).then(response => response.json()).then(({access_token}) => {
 		localStorage.setItem('accessToken', access_token);
 		window.location.reload();
+	})
+
+}
+
+export function logout() {
+	let url = `${API_ENDPOINT}/users/logout/?access_token=${ACCESS_TOKEN}`;
+	fetch(url).then(response => response.json()).then(() => {
+		localStorage.removeItem('accessToken');
+		purgePersistor().then(() => {
+			window.location.reload();
+		});
 	})
 
 }

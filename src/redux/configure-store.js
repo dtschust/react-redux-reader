@@ -5,6 +5,8 @@ import ReduxThunk from 'redux-thunk';
 
 import reducer from './root-reducer';
 
+let persistor;
+
 export default function configureStore(postHydrateCb) {
 	const middleware = [ReduxThunk];
 	const composeEnhancers =
@@ -14,7 +16,15 @@ export default function configureStore(postHydrateCb) {
 		composeEnhancers(applyMiddleware(...middleware), autoRehydrate()),
 	);
 
-	persistStore(store, undefined, postHydrateCb);
+	persistor = persistStore(store, undefined, postHydrateCb);
 
 	return store;
+}
+
+export function purgePersistor() {
+	if (persistor) {
+		return persistor.purge();
+	}
+
+	return Promise.resolve();
 }

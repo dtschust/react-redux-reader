@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 
+import { logout } from '../feed-wrangler-api';
 import {
 	getAllSubscriptionIds,
 	getUnreadSubscriptionIds,
@@ -28,6 +29,7 @@ class SubList extends Component {
 			p: this.prevSub.bind(this),
 		};
 		this.sync = this.sync.bind(this);
+		this.logout = this.logout.bind(this);
 		this.toggleShowFilter = this.toggleShowFilter.bind(this);
 	}
 
@@ -87,6 +89,11 @@ class SubList extends Component {
 		this.props.sync();
 	}
 
+	logout(e) {
+		e.preventDefault();
+		logout();
+	}
+
 	toggleShowFilter(e) {
 		e.preventDefault();
 		this.props.toggleShowFilter();
@@ -109,6 +116,9 @@ class SubList extends Component {
 				</button>
 				<button style={{ padding: '10px 0' }} onClick={this.sync}>
 					{this.props.syncing ? 'Syncing...' : 'Sync'}
+				</button>
+				<button style={{ padding: '10px 0' }} onClick={this.logout}>
+					Logout
 				</button>
 			</div>
 		);

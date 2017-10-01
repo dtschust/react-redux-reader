@@ -20,11 +20,20 @@
     "sanitize-html": "^1.14.1"
   },
   "scripts": {
+    "prettier": "prettier --write src/**/*.js*",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "prettier": "^1.7.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "useTabs": true
   }
 }

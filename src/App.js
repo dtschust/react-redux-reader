@@ -22,10 +22,10 @@ if (ACCESS_TOKEN) {
 		store.dispatch(sync());
 	});
 
-	// Sync every five minutes
+	// Sync every two hours
 	setInterval(() => {
 		store.dispatch(sync());
-	}, 5 * 60 * 1000)
+	}, 2 * 60 * 60 * 1000)
 }
 
 // Update timestamps every minute
@@ -36,7 +36,7 @@ setInterval(() => {
 class App extends Component {
 	render() {
 		if (!ACCESS_TOKEN) {
-			return <LoginForm/>
+			return <LoginForm />
 		}
 		return (
 			<Provider store={store}>

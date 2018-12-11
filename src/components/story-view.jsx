@@ -12,7 +12,7 @@ function StoryView({ body } = {}) {
 		<div
 			className="story-view"
 			style={{
-				padding: '50px 0px',
+				padding: '50px 20px',
 				lineHeight: '1.5',
 			}}
 			dangerouslySetInnerHTML={{ __html: body }}

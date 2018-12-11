@@ -5,14 +5,19 @@ import { getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { getFeedItem } from '../redux/reducers/feed-items-store';
 import Timestamp from './timestamp';
 
-function StoryTitle(
-	{ published_at, feed_name, author, title, url, read } = {},
-) {
+function StoryTitle({
+	published_at,
+	feed_name,
+	author,
+	title,
+	url,
+	read,
+} = {}) {
 	if (!title) {
 		return false;
 	}
 	return (
-		<div style={{}}>
+		<div className="story-title" style={{ padding: '20px' }}>
 			<div style={{ color: '#919190' }}>
 				<Timestamp time={published_at * 1000} />
 			</div>

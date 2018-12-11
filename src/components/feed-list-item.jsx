@@ -9,24 +9,22 @@ import {
 
 import Timestamp from './timestamp';
 
-function BaseFeedListItem(
-	{
-		id,
-		selectFeedItem,
-		published_at,
-		feed_name,
-		title,
-		summary,
-		read,
-		isActive,
-	} = {},
-) {
+function BaseFeedListItem({
+	id,
+	selectFeedItem,
+	published_at,
+	feed_name,
+	title,
+	summary,
+	read,
+	isActive,
+} = {}) {
 	return (
 		<div
 			id={`feed-item-${id}`}
 			style={{
-				backgroundColor: isActive ? '#f0eee8' : undefined,
-				borderBottom: '1px solid #e6e4de',
+				backgroundColor: isActive ? '#5e5d5e' : undefined,
+				borderBottom: '1px solid #3a3a3a',
 				padding: '0 20px 10px',
 				cursor: 'pointer',
 			}}
@@ -73,4 +71,7 @@ const mapDispatchToProps = {
 	selectFeedItem,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BaseFeedListItem);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)(BaseFeedListItem);

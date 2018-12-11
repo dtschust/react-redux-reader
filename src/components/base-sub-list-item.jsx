@@ -5,7 +5,7 @@ export default function({ id, title, count, isActive, selectSub, style }) {
 		<div
 			id={`sub-item-${id}`}
 			style={{
-				backgroundColor: isActive ? '#2d2e31' : undefined,
+				backgroundColor: isActive ? '#535353' : undefined,
 				padding: '0 15px',
 				cursor: 'pointer',
 				...style,

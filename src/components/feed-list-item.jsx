@@ -40,7 +40,13 @@ function BaseFeedListItem({
 					approximate
 				/>
 			</div>
-			<div style={{ fontWeight: read ? 'normal' : 'bold', padding: '5px 0' }}>
+			<div
+				style={{
+					fontWeight: read ? 'normal' : 'bold',
+					padding: '5px 0',
+					color: read ? '#bebebe' : '#e6e5e6',
+				}}
+			>
 				{title}
 			</div>
 			<div

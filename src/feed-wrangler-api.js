@@ -15,8 +15,12 @@ export function apiAuth(email, password) {
 	fetch(url)
 		.then(response => response.json())
 		.then(({ access_token }) => {
-			localStorage.setItem('accessToken', access_token);
-			window.location.reload();
+			if (!access_token) {
+				alert('No.');
+			} else {
+				localStorage.setItem('accessToken', access_token);
+				window.location.reload();
+			}
 		});
 }
 

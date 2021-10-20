@@ -6,18 +6,19 @@ import { getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { getFeedItem } from '../redux/reducers/feed-items-store';
 
 function StoryView({ body, url } = {}) {
-	if (!body) {
-		return false;
-	}
-
 	let tweetId;
 	try {
 		if (url.indexOf('https://twitter.com/') === 0) {
-			tweetId = url.match(/\/(\d+)$/)[1];
+			tweetId = url.match(/\/(\d+)(\?.*)?$/)[1];
 		}
 	} catch (e) {
 		// I don't care
 	}
+
+	if (!body && !tweetId) {
+		return false;
+	}
+
 	return (
 		<div
 			className="story-view"

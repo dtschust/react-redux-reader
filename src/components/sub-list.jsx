@@ -108,18 +108,18 @@ class SubList extends Component {
 						return <SubListItem id={id} key={id} />;
 					})}
 				</div>
-				<button
+				<a
 					style={{ marginTop: 'auto', padding: '10px 0' }}
 					onClick={this.toggleShowFilter}
 				>
 					Show {this.props.showFilter === SHOW_UNREAD ? 'All' : 'Unread Only'}
-				</button>
-				<button style={{ padding: '10px 0' }} onClick={this.sync}>
+				</a>
+				<a style={{ padding: '10px 0' }} onClick={this.sync}>
 					{this.props.syncing ? 'Syncing...' : 'Sync'}
-				</button>
-				<button style={{ padding: '10px 0' }} onClick={this.logout}>
+				</a>
+				<a style={{ padding: '10px 0' }} onClick={this.logout}>
 					Logout
-				</button>
+				</a>
 			</div>
 		);
 	}

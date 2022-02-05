@@ -46,9 +46,8 @@ function BaseFeedListItem({
 					padding: '5px 0',
 					color: read ? '#bebebe' : '#e6e5e6',
 				}}
-			>
-				{title}
-			</div>
+				dangerouslySetInnerHTML={{ __html: title }}
+			/>
 			<div
 				style={{
 					color: '#919190',

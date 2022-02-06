@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import sanitizeHtml from 'sanitize-html';
 
 import { getFeedItem } from '../redux/reducers/feed-items-store';
 import {
@@ -19,6 +20,13 @@ function BaseFeedListItem({
 	read,
 	isActive,
 } = {}) {
+	const sanitizedTitle = sanitizeHtml(title, {
+		allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
+		allowedAttributes: {
+			...sanitizeHtml.defaults.allowedAttributes,
+			iframe: ['src', 'width', 'height']
+		},
+	});
 	return (
 		<div
 			id={`feed-item-${id}`}
@@ -46,7 +54,7 @@ function BaseFeedListItem({
 					padding: '5px 0',
 					color: read ? '#bebebe' : '#e6e5e6',
 				}}
-				dangerouslySetInnerHTML={{ __html: title }}
+				dangerouslySetInnerHTML={{ __html: sanitizedTitle }}
 			/>
 			<div
 				style={{

@@ -55,12 +55,12 @@ export default createReducer({
 		const updates = payload.reduce(
 			(result, feedItem) => {
 				let summary = document.createElement('div')
-				summary.innerHTML = sanitizeHtml(feedItem.body);
+				summary.innerHTML = sanitizeHtml(feedItem.content);
 				summary = summary.innerText;
-				result[feedItem.feed_item_id] = {
+				result[feedItem.id] = {
 					...feedItem,
 					summary,
-					body: sanitizeHtml(feedItem.body, {
+					body: sanitizeHtml(feedItem.content, {
 						allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 						allowedAttributes: {
 							...sanitizeHtml.defaults.allowedAttributes,
@@ -128,7 +128,7 @@ export function getCountForFeed(state, id) {
 
 export function getFeedItemIdsForSelectedSub(state) {
 	const selectedSub = getSelectedSub(state);
-	return _.map(getFeedItemsForSub(state, selectedSub), 'feed_item_id');
+	return _.map(getFeedItemsForSub(state, selectedSub), 'id');
 }
 
 function getFeedItemsForSub(state, sub) {
@@ -143,7 +143,7 @@ function getFeedItemsForSub(state, sub) {
 			if (!feed.read) {
 				return true;
 			}
-			if (pendingCleanup[feed.feed_item_id]) {
+			if (pendingCleanup[feed.id]) {
 				return true
 			}
 			return false;

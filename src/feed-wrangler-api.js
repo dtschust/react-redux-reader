@@ -1,4 +1,4 @@
-import _ from 'lodash';
+// import _ from 'lodash';
 
 import { purgePersistor } from './redux/configure-store';
 
@@ -6,11 +6,17 @@ const API_ENDPOINT = 'https://drews-little-helpers.herokuapp.com/v2';
 
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
+function apiFetch(endpoint, options) {
+	const headers = new Headers();
+	headers.set('Authorization', ACCESS_TOKEN);
+	return fetch(`${API_ENDPOINT}/${endpoint}`, { headers, ...options })
+		.then(resp=>resp.json());
+}
+
 export function apiAuth(email, password) {
 	let url = `${API_ENDPOINT}/authentication.json`;
 	const headers = new Headers();
 	headers.set('Authorization', 'Basic ' + btoa(email + ":" + password));
-	headers.set('Credentials', 'include');
 	fetch(url, { headers })
 		.then(() => {
 			console.log('success!');
@@ -27,7 +33,7 @@ export function logout() {
 }
 
 export function apiFetchFeedItems(limit, offset, options = {}) {
-	return Promise.resolve([]);
+	return apiFetch('entries.json');
 }
 
 export function apiUpdateFeedItem(id, options = {}) {
@@ -38,19 +44,16 @@ export function apiUpdateFeedItem(id, options = {}) {
 }
 
 export function apiFetchSubscriptions() {
-	// TODO:
-	return Promise.resolve([]);
-	// const url = `${API_ENDPOINT}/subscriptions/list?access_token=${ACCESS_TOKEN}`;
-
-	// return fetch(url).then(response => response.json());
+	return apiFetch('subscriptions.json').then((feeds)=>({ feeds }));
 }
 
 export function apiFetchFeedItemsByIds(ids) {
-	return Promise.resolve([]);
+	return apiFetch(`entries.json?ids=${ids.join(',')}`);
 }
 
 export function apiFetchAllUnreadIds(offset = 0) {
-	return Promise.resolve([]);
+	// TODO: pagination, truly do "all"
+	return apiFetch('unread_entries.json');
 }
 
 export function apiFetchLastNDaysOfFeedItems(numDays, offset = 0) {

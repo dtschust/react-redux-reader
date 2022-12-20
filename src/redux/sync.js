@@ -10,6 +10,7 @@ import { fetchSubscriptions } from './reducers/subscriptions-store';
 import {
 	getAllFeedItems,
 	addFeedItems,
+	setAllUnreadIds,
 	getAllFeedItemIds,
 	deleteFeedItemsById,
 } from './reducers/feed-items-store';
@@ -59,6 +60,10 @@ export default function sync() {
 			subscriptionsPromise,
 		]).then(([unreadIds, allStories]) => {
 			dispatch(addFeedItems(allStories));
+			dispatch(setAllUnreadIds(unreadIds.reduce((acc, id)=>{
+				acc[id] = true;
+				return acc;
+			}, {})));
 
 			const idsToFetch = _.uniq(
 				_.difference(

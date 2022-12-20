@@ -6,6 +6,7 @@ import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
 import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
+export const setAllUnreadIds = createAction('Marks all of the unread ids');
 export const updateReadStatus = createAction('Update the read status of an item by id');
 export const deleteFeedItemsById = createAction('Delete feed items by id');
 
@@ -33,7 +34,7 @@ export function fetchFeedItemsForSub(subscriptionId) {
 
 export function toggleReadStatus(id) {
 	return (dispatch, getState) => {
-		const read = !getFeedItem(getState(), id).read;
+		const read = getFeedItemUnread(getState(), id);
 		apiUpdateFeedItem(id, { read }).then(({ result } = {}) => {
 			if (result === 'success') {
 				dispatch(updateReadStatus({ id, read }));
@@ -48,7 +49,7 @@ export function openFeedItemInBrowser(id) {
 	}
 }
 
-const initialState = {};
+const initialState = { unreads: {} };
 
 export default createReducer({
 	[addFeedItems]: (state, payload) => {
@@ -76,15 +77,19 @@ export default createReducer({
 			...updates,
 		}
 	},
-	[updateReadStatus]: (state, { id, read } = {}) => {
-		if (!id || !state[id] || state[id].read === read) {
-			return state;
-		}
+	[setAllUnreadIds]: (state, payload) => {
 		return {
 			...state,
-			[id]: {
-				...state[id],
-				read,
+			unreads: payload
+		}
+	},
+	[updateReadStatus]: (state, { id, read } = {}) => {
+		// TODO: early return if no-op for perf
+		return {
+			...state,
+			unreads: {
+				...state.unreads,
+				[id]: read,
 			}
 		}
 	},
@@ -92,7 +97,10 @@ export default createReducer({
 		if (!ids || !ids.length) {
 			return state;
 		}
-		return _.omit(state, ids);
+		return {
+			..._.omit(state, ids),
+			unreads: _.omit(state.unreads, ids),
+		};
 	},
 
 }, initialState);
@@ -115,6 +123,10 @@ export function getAllUnreadFeedItemIds(state) {
 
 export function getFeedItem(state, id) {
 	return state && state.feedItems && state.feedItems[id];
+}
+
+export function getFeedItemUnread(state, id) {
+	return state && state.feedItems && state.feedItems.unreads && state.feedItems.unreads[id];
 }
 
 export function getCountForFeed(state, id) {
@@ -140,7 +152,7 @@ function getFeedItemsForSub(state, sub) {
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
 		matchingFeeds = _.filter(matchingFeeds, (feed) => {
-			if (!feed.read) {
+			if (getFeedItemUnread(state, feed.id)) {
 				return true;
 			}
 			if (pendingCleanup[feed.id]) {

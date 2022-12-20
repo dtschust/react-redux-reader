@@ -2,25 +2,19 @@ import _ from 'lodash';
 
 import { purgePersistor } from './redux/configure-store';
 
-const API_ENDPOINT = 'https://drews-little-helpers.herokuapp.com/api/v2';
+const API_ENDPOINT = 'https://drews-little-helpers.herokuapp.com/v2';
 
 const ACCESS_TOKEN = localStorage.getItem('accessToken');
 
 export function apiAuth(email, password) {
-	let url = `${API_ENDPOINT}/users/authorize/?email=${encodeURI(
-		email,
-	)}&password=${encodeURI(
-		password,
-	)}&client_key=56b3890c6f9a8a2ce48dcb20b4101434`;
-	fetch(url)
+	let url = `${API_ENDPOINT}/authentication.json`;
+	const headers = new Headers();
+	headers.set('Authorization', 'Basic ' + btoa(email + ":" + password));
+	headers.set('Credentials', 'include');
+	fetch(url, { headers })
 		.then(response => response.json())
-		.then(({ access_token }) => {
-			if (!access_token) {
-				alert('No.');
-			} else {
-				localStorage.setItem('accessToken', access_token);
-				window.location.reload();
-			}
+		.then((data) => {
+			console.log('success!', data);
 		});
 }
 

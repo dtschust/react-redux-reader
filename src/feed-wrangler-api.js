@@ -12,9 +12,10 @@ export function apiAuth(email, password) {
 	headers.set('Authorization', 'Basic ' + btoa(email + ":" + password));
 	headers.set('Credentials', 'include');
 	fetch(url, { headers })
-		.then(response => response.json())
-		.then((data) => {
-			console.log('success!', data);
+		.then(() => {
+			console.log('success!');
+			// TODO: Store authorization header in localStorage
+			window.location.reload();
 		});
 }
 

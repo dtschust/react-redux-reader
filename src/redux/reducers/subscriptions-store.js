@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createAction, createReducer } from 'redux-act';
 import { apiFetchSubscriptions } from '../../feed-wrangler-api';
 
-import { getAllFeedItems } from './feed-items-store';
+import { getAllFeedItems, getAllUnreadFeedItemIds, getFeedItem } from './feed-items-store';
 
 export const updateSubscriptions = createAction('Update subscriptions');
 
@@ -38,6 +38,6 @@ export function getSubscriptionById(state, id) {
 }
 
 export function getUnreadSubscriptionIds(state) {
-	const unreadSubscriptionIds = _.uniq(_.map(_.filter(getAllFeedItems(state), { read: false }), 'feed_id'));
+	const unreadSubscriptionIds = _.uniq(getAllUnreadFeedItemIds(state).map((id) => (getFeedItem(state,id).feed_id)));
 	return _.sortBy(unreadSubscriptionIds, (id) => _.get(getSubscriptionById(state, id), 'title', '').toLowerCase());
 }

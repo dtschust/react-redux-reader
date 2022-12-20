@@ -114,11 +114,7 @@ export function getAllFeedItemIds(state) {
 }
 
 export function getAllUnreadFeedItemIds(state) {
-	if (!state || !state.feedItems) {
-		return [];
-	}
-	const unreadFeedItems = _.filter(state.feedItems, { read: false })
-	return Object.keys(unreadFeedItems);
+	return state && state.feedItems && state.feedItems.unreads && Object.keys(state.feedItems.unreads);
 }
 
 export function getFeedItem(state, id) {
@@ -133,7 +129,7 @@ export function getCountForFeed(state, id) {
 	let feedItems = getFeedItemsForSub(state, id);
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
-		feedItems = _.filter(feedItems, { read: false })
+		feedItems = _.filter(feedItems, (feed) => getFeedItemUnread(state, feed.id));
 	}
 	return Object.keys(feedItems).length;
 }

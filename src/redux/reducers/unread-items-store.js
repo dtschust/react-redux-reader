@@ -9,12 +9,12 @@ export default createReducer({
 		return payload;
 	},
 	[updateReadStatus]: (state, { id, read } = {}) => {
-		if (!!state[id] === !!read) {
+		if (!!state[id] === !read) {
 			return state;
 		}
 		return {
 			...state,
-			[id]: read,
+			[id]: !read,
 		}
 	},
 	[deleteFeedItemsById]: (state, ids = []) => {

@@ -46,8 +46,7 @@ export function apiFetchFeedItems(limit, offset, options = {}) {
 	}
 
 	if (!_.isUndefined(options.feedId)) {
-		// TODO: not sure if this works, also doesn't have support for unread filtering
-		return apiFetch(`subscriptions/${options.feedId}.json`);
+		return apiFetch(`feeds/${options.feedId}/entries.json?${params.toString()}`);
 	}
 
 	return apiFetch(`entries.json?${params.toString()}`);

@@ -21,7 +21,7 @@ function fetchFeedItems(limit, offset, feedId) {
 		}
 		return apiFetchFeedItems(limit, offset, options)
 		.then((response) => {
-			dispatch(addFeedItems(response.feed_items));
+			dispatch(addFeedItems(response));
 		});
 	}
 }

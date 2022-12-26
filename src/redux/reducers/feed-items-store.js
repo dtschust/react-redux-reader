@@ -6,6 +6,7 @@ import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
 import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
 
 export const addFeedItems = createAction('Add feed items');
+export const setAllUnreadIds = createAction('Marks all of the unread ids');
 export const updateReadStatus = createAction('Update the read status of an item by id');
 export const deleteFeedItemsById = createAction('Delete feed items by id');
 
@@ -20,7 +21,7 @@ function fetchFeedItems(limit, offset, feedId) {
 		}
 		return apiFetchFeedItems(limit, offset, options)
 		.then((response) => {
-			dispatch(addFeedItems(response.feed_items));
+			dispatch(addFeedItems(response));
 		});
 	}
 }
@@ -33,7 +34,7 @@ export function fetchFeedItemsForSub(subscriptionId) {
 
 export function toggleReadStatus(id) {
 	return (dispatch, getState) => {
-		const read = !getFeedItem(getState(), id).read;
+		const read = getFeedItemUnread(getState(), id);
 		apiUpdateFeedItem(id, { read }).then(({ result } = {}) => {
 			if (result === 'success') {
 				dispatch(updateReadStatus({ id, read }));
@@ -55,12 +56,12 @@ export default createReducer({
 		const updates = payload.reduce(
 			(result, feedItem) => {
 				let summary = document.createElement('div')
-				summary.innerHTML = sanitizeHtml(feedItem.body);
+				summary.innerHTML = sanitizeHtml(feedItem.content);
 				summary = summary.innerText;
-				result[feedItem.feed_item_id] = {
+				result[feedItem.id] = {
 					...feedItem,
 					summary,
-					body: sanitizeHtml(feedItem.body, {
+					body: sanitizeHtml(feedItem.content, {
 						allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 						allowedAttributes: {
 							...sanitizeHtml.defaults.allowedAttributes,
@@ -76,23 +77,13 @@ export default createReducer({
 			...updates,
 		}
 	},
-	[updateReadStatus]: (state, { id, read } = {}) => {
-		if (!id || !state[id] || state[id].read === read) {
-			return state;
-		}
-		return {
-			...state,
-			[id]: {
-				...state[id],
-				read,
-			}
-		}
-	},
 	[deleteFeedItemsById]: (state, ids = []) => {
 		if (!ids || !ids.length) {
 			return state;
 		}
-		return _.omit(state, ids);
+		return {
+			..._.omit(state, ids),
+		};
 	},
 
 }, initialState);
@@ -106,29 +97,29 @@ export function getAllFeedItemIds(state) {
 }
 
 export function getAllUnreadFeedItemIds(state) {
-	if (!state || !state.feedItems) {
-		return [];
-	}
-	const unreadFeedItems = _.filter(state.feedItems, { read: false })
-	return Object.keys(unreadFeedItems);
+	return state && state.unreadItems && Object.keys(state.unreadItems);
 }
 
 export function getFeedItem(state, id) {
 	return state && state.feedItems && state.feedItems[id];
 }
 
+export function getFeedItemUnread(state, id) {
+	return state && state.unreadItems && state.unreadItems[id];
+}
+
 export function getCountForFeed(state, id) {
 	let feedItems = getFeedItemsForSub(state, id);
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
-		feedItems = _.filter(feedItems, { read: false })
+		feedItems = _.filter(feedItems, (feed) => getFeedItemUnread(state, feed.id));
 	}
 	return Object.keys(feedItems).length;
 }
 
 export function getFeedItemIdsForSelectedSub(state) {
 	const selectedSub = getSelectedSub(state);
-	return _.map(getFeedItemsForSub(state, selectedSub), 'feed_item_id');
+	return _.map(getFeedItemsForSub(state, selectedSub), 'id');
 }
 
 function getFeedItemsForSub(state, sub) {
@@ -140,15 +131,18 @@ function getFeedItemsForSub(state, sub) {
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
 		matchingFeeds = _.filter(matchingFeeds, (feed) => {
-			if (!feed.read) {
+			if (getFeedItemUnread(state, feed.id)) {
 				return true;
 			}
-			if (pendingCleanup[feed.feed_item_id]) {
+			if (pendingCleanup[feed.id]) {
 				return true
 			}
 			return false;
 		});
 	}
 
-	return _(matchingFeeds).sortBy('published_at').reverse().value();
+	return _(matchingFeeds)
+		.sortBy((feedItem) => (new Date(feedItem.published).getTime()))
+		.reverse()
+		.value();
 }

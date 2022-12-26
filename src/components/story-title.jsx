@@ -4,20 +4,22 @@ import sanitizeHtml from 'sanitize-html';
 
 import { getSelectedFeedItemId } from '../redux/reducers/app-state-store';
 import { getFeedItem } from '../redux/reducers/feed-items-store';
+import { getSubscriptionById } from '../redux/reducers/subscriptions-store';
 import Timestamp from './timestamp';
 
 function StoryTitle({
-	published_at,
+	published,
 	feed_name,
 	author,
 	title,
+	summary,
 	url,
 	read,
 } = {}) {
-	if (!title) {
+	if (!title && !summary) {
 		return false;
 	}
-	const sanitizedTitle = sanitizeHtml(title, {
+	const sanitizedTitle = sanitizeHtml(title || summary, {
 		allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 		allowedAttributes: {
 			...sanitizeHtml.defaults.allowedAttributes,
@@ -27,7 +29,7 @@ function StoryTitle({
 	return (
 		<div className="story-title" style={{ padding: '20px' }}>
 			<div style={{ color: '#919190' }}>
-				<Timestamp time={published_at * 1000} />
+				<Timestamp time={published} />
 			</div>
 			<h1 style={{ margin: '15px 0' }}>
 				<a
@@ -48,7 +50,13 @@ function mapStateToProps(state) {
 	if (!feedItemId) {
 		return {};
 	}
-	return getFeedItem(state, feedItemId);
+	const feedItem = getFeedItem(state, feedItemId);
+	const subscription = getSubscriptionById(state, feedItem && feedItem.feed_id);
+
+	return {
+		...feedItem,
+		feed_name: subscription && subscription.title,
+	};
 }
 
 export default connect(mapStateToProps)(StoryTitle);

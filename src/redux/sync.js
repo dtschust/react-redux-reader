@@ -9,7 +9,9 @@ import { updateSyncingState } from './reducers/app-state-store';
 import { fetchSubscriptions } from './reducers/subscriptions-store';
 import {
 	getAllFeedItems,
+	getFeedItemUnread,
 	addFeedItems,
+	setAllUnreadIds,
 	getAllFeedItemIds,
 	deleteFeedItemsById,
 } from './reducers/feed-items-store';
@@ -17,19 +19,18 @@ import {
 function pruneOldReadPosts() {
 	return (dispatch, getState) => {
 		const state = getState();
-		const now = Date.now() / 1000;
-		const tenDaysAgo = now - 10 * 60 * 60 * 24;
+		const tenDaysAgo = new Date(Date.now() - 10 * 60 * 60 * 24 * 1000)
 
 		const allFeedItems = getAllFeedItems(state);
 		const idsToRemove = _(allFeedItems)
 			.filter(feedItem => {
-				if (feedItem.read && feedItem.published_at < tenDaysAgo) {
+				if (!getFeedItemUnread(state, feedItem.id) && new Date(feedItem.published) < tenDaysAgo) {
 					return true;
 				}
 
 				return false;
 			})
-			.map(({ feed_item_id }) => feed_item_id.toString())
+			.map(({ id }) => id.toString())
 			.value();
 
 		if (idsToRemove.length) {
@@ -57,11 +58,15 @@ export default function sync() {
 			subscriptionsPromise,
 		]).then(([unreadIds, allStories]) => {
 			dispatch(addFeedItems(allStories));
+			dispatch(setAllUnreadIds(unreadIds.reduce((acc, id)=>{
+				acc[id] = true;
+				return acc;
+			}, {})));
 
 			const idsToFetch = _.uniq(
 				_.difference(
-					_.uniq(knownFeedItemIds.concat(unreadIds)),
-					_.map(allStories, ({ feed_item_id }) => feed_item_id.toString()),
+					_.uniq(knownFeedItemIds.concat(unreadIds.map((id) => (id.toString())))),
+					_.map(allStories, ({ id }) => id.toString()),
 				),
 			);
 
@@ -69,7 +74,7 @@ export default function sync() {
 			const fetches = _.chunk(idsToFetch, 100).map(ids => {
 				return apiFetchFeedItemsByIds(ids).then(feedItems => {
 					fetchedIds.push(
-						..._.map(feedItems, ({ feed_item_id }) => feed_item_id.toString()),
+						..._.map(feedItems, ({ id }) => id.toString()),
 					);
 					dispatch(addFeedItems(feedItems));
 				});
@@ -78,6 +83,7 @@ export default function sync() {
 				// ids not returned by the API are dead: either they're so old feed wrangler
 				// forgot about them, or we unsubscribed from the relevant feed. Regardless,
 				// cull them.
+
 				const deadIds = _.difference(idsToFetch, fetchedIds);
 				if (deadIds.length) {
 					dispatch(deleteFeedItemsById(deadIds));

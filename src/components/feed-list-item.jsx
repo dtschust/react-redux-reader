@@ -2,7 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import sanitizeHtml from 'sanitize-html';
 
-import { getFeedItem } from '../redux/reducers/feed-items-store';
+import {
+	getFeedItem,
+	getFeedItemUnread,
+} from '../redux/reducers/feed-items-store';
 import {
 	selectFeedItem,
 	getSelectedFeedItemId,
@@ -13,14 +16,14 @@ import Timestamp from './timestamp';
 function BaseFeedListItem({
 	id,
 	selectFeedItem,
-	published_at,
+	published,
 	feed_name,
 	title,
 	summary,
 	read,
 	isActive,
 } = {}) {
-	const sanitizedTitle = sanitizeHtml(title, {
+	const sanitizedTitle = sanitizeHtml(title || summary, {
 		allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 		allowedAttributes: {
 			...sanitizeHtml.defaults.allowedAttributes,
@@ -44,7 +47,7 @@ function BaseFeedListItem({
 				{feed_name}
 				<Timestamp
 					style={{ float: 'right' }}
-					time={published_at * 1000}
+					time={published}
 					approximate
 				/>
 			</div>
@@ -65,7 +68,7 @@ function BaseFeedListItem({
 					whiteSpace: 'nowrap',
 				}}
 			>
-				{summary}
+				{summary === 'null' ? '': summary}
 			</div>
 		</div>
 	);
@@ -76,6 +79,7 @@ function mapStateToProps(state, { id }) {
 	return {
 		...feedItem,
 		id,
+		read: !getFeedItemUnread(state, id),
 		isActive: getSelectedFeedItemId(state) === id,
 	};
 }

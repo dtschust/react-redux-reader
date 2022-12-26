@@ -141,5 +141,8 @@ function getFeedItemsForSub(state, sub) {
 		});
 	}
 
-	return _(matchingFeeds).sortBy('published_at').reverse().value();
+	return _(matchingFeeds)
+		.sortBy((feedItem) => (new Date(feedItem.published).getTime()))
+		.reverse()
+		.value();
 }

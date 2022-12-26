@@ -19,6 +19,10 @@ function StoryView({ body, url } = {}) {
 		return false;
 	}
 
+	if (body === 'null') {
+		return false;
+	}
+
 	return (
 		<div
 			className="story-view"

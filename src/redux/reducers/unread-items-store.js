@@ -12,10 +12,13 @@ export default createReducer({
 		if (!!state[id] === !read) {
 			return state;
 		}
-		return {
-			...state,
-			[id]: !read,
+		const newState = { ...state };
+		if (read) {
+			delete newState[id];
+		} else {
+			newState[id] = true;
 		}
+		return newState;
 	},
 	[deleteFeedItemsById]: (state, ids = []) => {
 		if (!ids || !ids.length) {

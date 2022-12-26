@@ -10,6 +10,7 @@ import {
 	selectFeedItem,
 	getSelectedFeedItemId,
 } from '../redux/reducers/app-state-store';
+import { getSubscriptionById } from '../redux/reducers/subscriptions-store';
 
 import Timestamp from './timestamp';
 
@@ -23,7 +24,7 @@ function BaseFeedListItem({
 	read,
 	isActive,
 } = {}) {
-	const sanitizedTitle = sanitizeHtml(title || summary, {
+	const sanitizedTitle = sanitizeHtml(title || summary.split(' ').slice(0, 15).join(' ') + '...', {
 		allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 		allowedAttributes: {
 			...sanitizeHtml.defaults.allowedAttributes,
@@ -76,11 +77,13 @@ function BaseFeedListItem({
 
 function mapStateToProps(state, { id }) {
 	const feedItem = getFeedItem(state, id);
+	const subscription = getSubscriptionById(state, feedItem && feedItem.feed_id);
 	return {
 		...feedItem,
 		id,
 		read: !getFeedItemUnread(state, id),
 		isActive: getSelectedFeedItemId(state) === id,
+		feed_name: subscription && subscription.title,
 	};
 }
 

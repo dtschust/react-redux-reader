@@ -1,4 +1,4 @@
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import { purgePersistor } from './redux/configure-store';
 
@@ -9,6 +9,7 @@ const ACCESS_TOKEN = localStorage.getItem('accessToken');
 function apiFetch(endpoint, options) {
 	const headers = new Headers();
 	headers.set('Authorization', ACCESS_TOKEN);
+	headers.set('Content-Type', 'application/json');
 	return fetch(`${API_ENDPOINT}/${endpoint}`, { headers, ...options })
 		.then(resp=>resp.json());
 }
@@ -33,10 +34,33 @@ export function logout() {
 }
 
 export function apiFetchFeedItems(limit, offset, options = {}) {
-	return apiFetch('entries.json');
+	const params = new URLSearchParams()
+
+	// TODO: offset support
+	// if (offset) {
+	// 	url += `&offset=${offset}`;
+	// }
+
+	if (!_.isUndefined(options.read)) {
+		params.set('read', options.read);
+	}
+
+	if (!_.isUndefined(options.feedId)) {
+		// TODO: not sure if this works, also doesn't have support for unread filtering
+		return apiFetch(`subscriptions/${options.feedId}.json`);
+	}
+
+	return apiFetch(`entries.json?${params.toString()}`);
 }
 
 export function apiUpdateFeedItem(id, options = {}) {
+	if (!_.isUndefined(options.read)) {
+		return apiFetch(`unread_entries.json`, {
+			method: options.read ? 'DELETE' : 'POST',
+			body: JSON.stringify({ unread_entries: [ id ] })
+		}).then(() => ({ result: 'success' }));
+	}
+
 	// Fake version for testing
 	return Promise.resolve({
 		result: 'success',
@@ -52,10 +76,10 @@ export function apiFetchFeedItemsByIds(ids) {
 }
 
 export function apiFetchAllUnreadIds(offset = 0) {
-	// TODO: pagination, truly do "all"
 	return apiFetch('unread_entries.json');
 }
 
+// TODO
 export function apiFetchLastNDaysOfFeedItems(numDays, offset = 0) {
 	return Promise.resolve([]);
 }

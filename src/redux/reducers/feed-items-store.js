@@ -49,7 +49,7 @@ export function openFeedItemInBrowser(id) {
 	}
 }
 
-const initialState = { unreads: {} };
+const initialState = {};
 
 export default createReducer({
 	[addFeedItems]: (state, payload) => {
@@ -77,29 +77,12 @@ export default createReducer({
 			...updates,
 		}
 	},
-	[setAllUnreadIds]: (state, payload) => {
-		return {
-			...state,
-			unreads: payload
-		}
-	},
-	[updateReadStatus]: (state, { id, read } = {}) => {
-		// TODO: early return if no-op for perf
-		return {
-			...state,
-			unreads: {
-				...state.unreads,
-				[id]: read,
-			}
-		}
-	},
 	[deleteFeedItemsById]: (state, ids = []) => {
 		if (!ids || !ids.length) {
 			return state;
 		}
 		return {
 			..._.omit(state, ids),
-			unreads: _.omit(state.unreads, ids),
 		};
 	},
 
@@ -114,7 +97,7 @@ export function getAllFeedItemIds(state) {
 }
 
 export function getAllUnreadFeedItemIds(state) {
-	return state && state.feedItems && state.feedItems.unreads && Object.keys(state.feedItems.unreads);
+	return state && state.unreadItems && Object.keys(state.unreadItems);
 }
 
 export function getFeedItem(state, id) {
@@ -122,7 +105,7 @@ export function getFeedItem(state, id) {
 }
 
 export function getFeedItemUnread(state, id) {
-	return state && state.feedItems && state.feedItems.unreads && state.feedItems.unreads[id];
+	return state && state.unreadItems && state.unreadItems[id];
 }
 
 export function getCountForFeed(state, id) {

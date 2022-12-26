@@ -18,6 +18,7 @@ export default function configureStore(postHydrateCb) {
 
 	persistor = persistStore(store, undefined, postHydrateCb);
 
+	window.store = store;
 	return store;
 }
 

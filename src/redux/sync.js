@@ -9,6 +9,7 @@ import { updateSyncingState } from './reducers/app-state-store';
 import { fetchSubscriptions } from './reducers/subscriptions-store';
 import {
 	getAllFeedItems,
+	getFeedItemUnread,
 	addFeedItems,
 	setAllUnreadIds,
 	getAllFeedItemIds,
@@ -17,16 +18,13 @@ import {
 
 function pruneOldReadPosts() {
 	return (dispatch, getState) => {
-		// TODO: implement
-		return;
 		const state = getState();
-		const now = Date.now() / 1000;
-		const tenDaysAgo = now - 10 * 60 * 60 * 24;
+		const tenDaysAgo = new Date(Date.now() - 10 * 60 * 60 * 24 * 1000)
 
 		const allFeedItems = getAllFeedItems(state);
 		const idsToRemove = _(allFeedItems)
 			.filter(feedItem => {
-				if (feedItem.read && feedItem.published_at < tenDaysAgo) {
+				if (!getFeedItemUnread(state, feedItem.id) && new Date(feedItem.published) < tenDaysAgo) {
 					return true;
 				}
 
@@ -67,7 +65,7 @@ export default function sync() {
 
 			const idsToFetch = _.uniq(
 				_.difference(
-					_.uniq(knownFeedItemIds.concat(unreadIds)),
+					_.uniq(knownFeedItemIds.concat(unreadIds.map((id) => (id.toString())))),
 					_.map(allStories, ({ id }) => id.toString()),
 				),
 			);
@@ -86,11 +84,10 @@ export default function sync() {
 				// forgot about them, or we unsubscribed from the relevant feed. Regardless,
 				// cull them.
 
-				// TODO: Fixme
-				// const deadIds = _.difference(idsToFetch, fetchedIds);
-				// if (deadIds.length) {
-				// 	dispatch(deleteFeedItemsById(deadIds));
-				// }
+				const deadIds = _.difference(idsToFetch, fetchedIds);
+				if (deadIds.length) {
+					dispatch(deleteFeedItemsById(deadIds));
+				}
 
 				dispatch(pruneOldReadPosts());
 				dispatch(updateSyncingState(false));

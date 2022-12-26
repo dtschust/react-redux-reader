@@ -34,7 +34,7 @@ export function logout() {
 }
 
 export function apiFetchFeedItems(limit, offset, options = {}) {
-	const params = new URLSearchParams()
+	const params = new URLSearchParams();
 
 	// TODO: offset support
 	// if (offset) {
@@ -79,7 +79,23 @@ export function apiFetchAllUnreadIds(offset = 0) {
 	return apiFetch('unread_entries.json');
 }
 
-// TODO
-export function apiFetchLastNDaysOfFeedItems(numDays, offset = 0) {
-	return Promise.resolve([]);
+export function apiFetchLastNDaysOfFeedItems(numDays, page = 1) {
+	const params = new URLSearchParams();
+	params.set('since', new Date(1000 * (Math.floor(Date.now() / 1000) - numDays * 60 * 60 * 24)).toISOString())
+	params.set('page', page);
+
+	return apiFetch(`entries.json?${params.toString()}`)
+		.catch(() => ([])) // we get a 404 if the new page doesn't exist
+		.then((feedItems) => {
+			if (feedItems && feedItems.length === 100) {
+				// fetch more
+				return apiFetchLastNDaysOfFeedItems(
+					numDays,
+					page + 1,
+				).then(newFeedItems => {
+					return feedItems.concat(newFeedItems);
+				});
+			}
+			return feedItems;
+		});
 }

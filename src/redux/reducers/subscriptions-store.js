@@ -38,6 +38,12 @@ export function getSubscriptionById(state, id) {
 }
 
 export function getUnreadSubscriptionIds(state) {
-	const unreadSubscriptionIds = _.uniq(getAllUnreadFeedItemIds(state).map((id) => (getFeedItem(state,id).feed_id)));
+	const unreadSubscriptionIds = _.filter(_.uniq(getAllUnreadFeedItemIds(state).map((id) => {
+		if (!getFeedItem(state,id)) {
+			// TODO: What does it mean to have unread feed items but not have the content?
+			return;
+		}
+		return getFeedItem(state,id).feed_id
+	})));
 	return _.sortBy(unreadSubscriptionIds, (id) => _.get(getSubscriptionById(state, id), 'title', '').toLowerCase());
 }

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createAction, createReducer } from 'redux-act';
 import { apiFetchSubscriptions } from '../../feed-wrangler-api';
 
-import { getAllFeedItems, getAllUnreadFeedItemIds, getFeedItem } from './feed-items-store';
+import { getAllUnreadFeedItemIds, getFeedItem } from './feed-items-store';
 
 export const updateSubscriptions = createAction('Update subscriptions');
 
@@ -29,7 +29,6 @@ export default createReducer({
 }, initialState);
 
 export function getAllSubscriptionIds(state) {
-	// return state && state.subscriptions && Object.keys(state.subscriptions);
 	return state && state.subscriptions && _.map(_.sortBy(state.subscriptions, ({title}) => title.toLowerCase()), 'feed_id')
 }
 
@@ -41,7 +40,7 @@ export function getUnreadSubscriptionIds(state) {
 	const unreadSubscriptionIds = _.filter(_.uniq(getAllUnreadFeedItemIds(state).map((id) => {
 		if (!getFeedItem(state,id)) {
 			// TODO: What does it mean to have unread feed items but not have the content?
-			return;
+			return null;
 		}
 		return getFeedItem(state,id).feed_id
 	})));

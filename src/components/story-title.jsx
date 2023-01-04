@@ -19,7 +19,7 @@ function StoryTitle({
 	if (!title && !summary) {
 		return false;
 	}
-	const sanitizedTitle = sanitizeHtml(title || summary, {
+	const sanitizedTitle = sanitizeHtml(title || summary.split(' ').slice(0, 15).join(' ') + '...', {
 		allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'iframe' ]),
 		allowedAttributes: {
 			...sanitizeHtml.defaults.allowedAttributes,

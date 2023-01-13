@@ -19,7 +19,7 @@ function StoryView({ body, url } = {}) {
 		return false;
 	}
 
-	if (body === 'null') {
+	if (body === 'null' && !tweetId) {
 		return false;
 	}
 
@@ -40,7 +40,7 @@ function StoryView({ body, url } = {}) {
 					<TwitterTweetEmbed key={tweetId} tweetId={tweetId} />
 				</div>
 			)}
-			<div dangerouslySetInnerHTML={{ __html: body }} />
+			<div dangerouslySetInnerHTML={{ __html: body !== 'null' ? body : '' }} />
 		</div>
 	);
 }

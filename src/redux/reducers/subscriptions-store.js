@@ -3,6 +3,7 @@ import { createAction, createReducer } from 'redux-act';
 import { apiFetchSubscriptions } from '../../feed-wrangler-api';
 
 import { getAllUnreadFeedItemIds, getFeedItem } from './feed-items-store';
+import { getTagsForSub } from './taggings-store'
 
 export const updateSubscriptions = createAction('Update subscriptions');
 
@@ -29,7 +30,12 @@ export default createReducer({
 }, initialState);
 
 export function getAllSubscriptionIds(state) {
-	return state && state.subscriptions && _.map(_.sortBy(state.subscriptions, ({title}) => title.toLowerCase()), 'feed_id')
+	return state && state.subscriptions && _.map(
+		_.sortBy(state.subscriptions, [
+			({feed_id}) => getTagsForSub(state, feed_id),
+			({title}) => title.toLowerCase()
+		])
+	, 'feed_id')
 }
 
 export function getSubscriptionById(state, id) {
@@ -44,5 +50,8 @@ export function getUnreadSubscriptionIds(state) {
 		}
 		return getFeedItem(state,id).feed_id
 	})));
-	return _.sortBy(unreadSubscriptionIds, (id) => _.get(getSubscriptionById(state, id), 'title', '').toLowerCase());
+	return _.sortBy(unreadSubscriptionIds, [
+		(id) => getTagsForSub(state, id),
+		(id) => _.get(getSubscriptionById(state, id), 'title', '').toLowerCase()
+	]);
 }

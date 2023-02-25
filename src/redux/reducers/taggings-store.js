@@ -30,5 +30,5 @@ export function getSubsForTag(state, tag) {
 }
 
 export function getTagsForSub(state, feed_id) {
-	return state.taggings.subsToTags[feed_id];
+	return state.taggings.subsToTags[feed_id] || [];
 }

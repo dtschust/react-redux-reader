@@ -7,6 +7,8 @@ import { logout } from '../feed-wrangler-api';
 import {
 	getAllSubscriptionIds,
 	getUnreadSubscriptionIds,
+	getTaggedSubscriptionIds,
+	getTaggedUnreadSubscriptionIds,
 } from '../redux/reducers/subscriptions-store';
 import {
 	toggleShowFilter,
@@ -104,6 +106,15 @@ class SubList extends Component {
 			<div id="sub-list">
 				<div style={{ overflow: 'auto', flex: '1 1 0', paddingTop: '30px' }}>
 					<AllSubListItem />
+					{/* TODO: Make this its own component */}
+					{Object.keys(this.props.tags).map(tag => {
+						return <div>
+							{tag}
+							{this.props.tags[tag].map(id => {
+								return <SubListItem id={id} key={id} />;
+							})}
+						</div>
+					})}
 					{this.props.subscriptionIds.map(id => {
 						return <SubListItem id={id} key={id} />;
 					})}
@@ -131,6 +142,9 @@ function mapStateToProps(state) {
 		subscriptionIds: showUnread
 			? getUnreadSubscriptionIds(state)
 			: getAllSubscriptionIds(state),
+		tags: showUnread
+			? getTaggedUnreadSubscriptionIds(state)
+			: getTaggedSubscriptionIds(state),
 		selectedSubscriptionId: getSelectedSub(state),
 		showFilter: getShowFilter(state),
 		syncing: getSyncingStatus(state),

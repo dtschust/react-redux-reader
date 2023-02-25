@@ -33,6 +33,10 @@ export function logout() {
 	});
 }
 
+export function apiFetchTaggings() {
+	return apiFetch('taggings.json')
+}
+
 export function apiFetchFeedItems(limit, offset, options = {}) {
 	const params = new URLSearchParams();
 

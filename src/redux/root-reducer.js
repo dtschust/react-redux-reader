@@ -5,6 +5,7 @@ import feedItems from './reducers/feed-items-store';
 import unreadItems from './reducers/unread-items-store';
 import subscriptions from './reducers/subscriptions-store';
 import pendingCleanup from './reducers/pending-cleanup-store';
+import taggings from './reducers/taggings-store';
 
 export default combineReducers({
 	appState,
@@ -12,4 +13,5 @@ export default combineReducers({
 	unreadItems,
 	subscriptions,
 	pendingCleanup,
+	taggings,
 });

@@ -4,6 +4,7 @@ import {
 	apiFetchFeedItemsByIds,
 	apiFetchAllUnreadIds,
 	apiFetchLastNDaysOfFeedItems,
+	apiFetchTaggings,
 } from '../feed-wrangler-api';
 import { updateSyncingState } from './reducers/app-state-store';
 import { fetchSubscriptions } from './reducers/subscriptions-store';
@@ -15,6 +16,7 @@ import {
 	getAllFeedItemIds,
 	deleteFeedItemsById,
 } from './reducers/feed-items-store';
+import { setTaggings } from './reducers/taggings-store';
 
 function pruneOldReadPosts() {
 	return (dispatch, getState) => {
@@ -52,11 +54,15 @@ export default function sync() {
 
 		const subscriptionsPromise = dispatch(fetchSubscriptions());
 
+		const taggingsPromise = apiFetchTaggings();
+
 		Promise.all([
 			unreadIdsPromise,
 			fetchAllPromise,
 			subscriptionsPromise,
-		]).then(([unreadIds, allStories]) => {
+			taggingsPromise,
+		]).then(([unreadIds, allStories, _subscriptions, taggings]) => {
+			dispatch(setTaggings(taggings));
 			dispatch(addFeedItems(allStories));
 			dispatch(setAllUnreadIds(unreadIds.reduce((acc, id)=>{
 				acc[id] = true;

@@ -105,7 +105,7 @@ export function getFeedItem(state, id) {
 }
 
 export function getFeedItemUnread(state, id) {
-	return state && state.unreadItems && state.unreadItems[id];
+	return state && state.unreadItems && !!state.unreadItems[id];
 }
 
 export function getCountForFeed(state, id) {

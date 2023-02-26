@@ -3,7 +3,8 @@ import { createAction, createReducer } from 'redux-act';
 import sanitizeHtml from 'sanitize-html';
 
 import { apiFetchFeedItems, apiUpdateFeedItem } from '../../feed-wrangler-api';
-import { getShowFilter, getSelectedSub, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
+import { getShowFilter, getSelectedSub, getSelectedTag, SHOW_UNREAD, ALL_SUBSCRIPTION } from './app-state-store';
+import { getSubsForTag } from './taggings-store';
 
 export const addFeedItems = createAction('Add feed items');
 export const setAllUnreadIds = createAction('Marks all of the unread ids');
@@ -128,6 +129,34 @@ function getFeedItemsForSub(state, sub) {
 	if (sub !== ALL_SUBSCRIPTION) {
 		matchingFeeds = _.filter(state.feedItems, { feed_id: parseInt(sub, 10) });
 	}
+
+	if (getShowFilter(state) === SHOW_UNREAD) {
+		matchingFeeds = _.filter(matchingFeeds, (feed) => {
+			if (getFeedItemUnread(state, feed.id)) {
+				return true;
+			}
+			if (pendingCleanup[feed.id]) {
+				return true
+			}
+			return false;
+		});
+	}
+
+	return _(matchingFeeds)
+		.sortBy((feedItem) => (new Date(feedItem.published).getTime()))
+		.reverse()
+		.value();
+}
+
+export function getFeedItemIdsForSelectedTag(state) {
+	const selectedTag = getSelectedTag(state);
+	return _.map(getFeedItemsForTag(state, selectedTag), 'id');
+}
+
+function getFeedItemsForTag(state, tag) {
+	const pendingCleanup = state.pendingCleanup;
+	const subs = getSubsForTag(state, tag);
+	let matchingFeeds = _.filter(state.feedItems, ({ feed_id }) => subs.includes(feed_id));
 
 	if (getShowFilter(state) === SHOW_UNREAD) {
 		matchingFeeds = _.filter(matchingFeeds, (feed) => {

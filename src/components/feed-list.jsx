@@ -7,6 +7,7 @@ import {
 	selectFeedItem,
 	getSelectedFeedItemId,
 	getSelectedSub,
+	getSelectedTag,
 	getShowFilter,
 	SHOW_UNREAD,
 	ALL_SUBSCRIPTION,
@@ -15,6 +16,7 @@ import {
 	openFeedItemInBrowser,
 	toggleReadStatus,
 	getFeedItemIdsForSelectedSub,
+	getFeedItemIdsForSelectedTag,
 	fetchFeedItemsForSub,
 } from '../redux/reducers/feed-items-store';
 import { cleanup } from '../redux/reducers/pending-cleanup-store';
@@ -130,8 +132,9 @@ class FeedList extends Component {
 }
 
 function mapStateToProps(state) {
+	const tag = getSelectedTag(state);
 	return {
-		feedIds: getFeedItemIdsForSelectedSub(state),
+		feedIds: tag ? getFeedItemIdsForSelectedTag(state, tag): getFeedItemIdsForSelectedSub(state),
 		selectedFeedId: getSelectedFeedItemId(state),
 		selectedSubId: getSelectedSub(state),
 		showFilter: getShowFilter(state),

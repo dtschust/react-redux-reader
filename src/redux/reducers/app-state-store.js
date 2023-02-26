@@ -2,6 +2,7 @@ import { createAction, createReducer } from 'redux-act';
 import { REHYDRATE } from 'redux-persist/constants'
 
 export const selectSub = createAction('Select a subscription, or ALL or undefined');
+export const selectTag = createAction('Select a tag');
 export const selectFeedItem = createAction('Select a feed item by id');
 export const toggleShowFilter = createAction('Change the filter to show ALL or UNREAD');
 export const updateSyncingState = createAction('Start or stop syncing');
@@ -15,6 +16,7 @@ export const SHOW_UNREAD = 'SHOW_UNREAD';
 const initialState = {
 	selectedSub: ALL_SUBSCRIPTION,
 	selectedFeedItem: undefined,
+	selectedTag: undefined,
 	show: SHOW_UNREAD,
 	syncing: false,
 	timestampNonce: Date.now(),
@@ -31,6 +33,14 @@ export default createReducer({
 		return {
 			...state,
 			selectedSub: id,
+			selectedTag: undefined,
+		}
+	},
+	[selectTag]: (state, tag) => {
+		return {
+			...state,
+			selectedTag: tag,
+			selectedSub: undefined,
 		}
 	},
 	[selectFeedItem]: (state, id) => {
@@ -67,6 +77,10 @@ export function getShowFilter(state) {
 
 export function getSelectedSub(state) {
 	return state && state.appState && state.appState.selectedSub;
+}
+
+export function getSelectedTag(state) {
+	return state && state.appState && state.appState.selectedTag;
 }
 
 export function getSelectedFeedItemId(state) {

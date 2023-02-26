@@ -22,6 +22,7 @@ import {
 import sync from '../redux/sync';
 import SubListItem from './sub-list-item';
 import AllSubListItem from './all-sub-list-item';
+import TagListContainer from './tag-list-container';
 
 class SubList extends Component {
 	constructor(props) {
@@ -106,14 +107,9 @@ class SubList extends Component {
 			<div id="sub-list">
 				<div style={{ overflow: 'auto', flex: '1 1 0', paddingTop: '30px' }}>
 					<AllSubListItem />
-					{/* TODO: Make this its own component */}
 					{Object.keys(this.props.tags).map(tag => {
-						return <div>
-							{tag}
-							{this.props.tags[tag].map(id => {
-								return <SubListItem id={id} key={id} />;
-							})}
-						</div>
+						return <TagListContainer key={tag} tag={tag} />
+
 					})}
 					{this.props.subscriptionIds.map(id => {
 						return <SubListItem id={id} key={id} />;

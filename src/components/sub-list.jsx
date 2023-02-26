@@ -13,7 +13,9 @@ import {
 import {
 	toggleShowFilter,
 	selectSub,
+	selectTag,
 	getSelectedSub,
+	getSelectedTag,
 	getShowFilter,
 	getSyncingStatus,
 	SHOW_UNREAD,
@@ -49,9 +51,25 @@ class SubList extends Component {
 	}
 
 	nextSub() {
-		const { subscriptionIds, selectedSubscriptionId, selectSub } = this.props;
+		const { subscriptionIds, selectedSubscriptionId, selectedTag, selectSub, selectTag, tags } = this.props;
 		let idToScrollTo;
-		if (selectedSubscriptionId === ALL_SUBSCRIPTION && subscriptionIds[0]) {
+		let tagToScrollTo;
+		const tag = Object.keys(tags).find((tagToCheck) => {
+			return tags[tagToCheck].includes(selectedSubscriptionId)
+		})
+		if (selectedTag) {
+			idToScrollTo = tags[selectedTag].length ? tags[selectedTag][0] : ALL_SUBSCRIPTION;
+		} else if (tag) {
+			const currentTagIndex = tags[tag].indexOf(selectedSubscriptionId);
+			if (currentTagIndex >= 0 && currentTagIndex + 1 < tags[tag].length) {
+				idToScrollTo = tags[tag][currentTagIndex + 1];
+			} else {
+				// TODO: do better once I have multiple tags
+				idToScrollTo = subscriptionIds[0];
+			}
+		} else if (selectedSubscriptionId === ALL_SUBSCRIPTION && Object.keys(tags).length) {
+			tagToScrollTo = Object.keys(tags)[0];
+		} else if (selectedSubscriptionId === ALL_SUBSCRIPTION && subscriptionIds[0]) {
 			idToScrollTo = subscriptionIds[0];
 		} else {
 			const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
@@ -62,29 +80,64 @@ class SubList extends Component {
 			}
 		}
 
-		selectSub(idToScrollTo);
-		document
-			.querySelector(`#sub-item-${idToScrollTo}`)
-			.scrollIntoViewIfNeeded(false);
+		if (tagToScrollTo) {
+			selectTag(tagToScrollTo);
+			document
+				.querySelector(`#tag-item-${tagToScrollTo}`)
+				.scrollIntoViewIfNeeded(false);
+
+		} else {
+			selectSub(idToScrollTo);
+			document
+				.querySelector(`#sub-item-${idToScrollTo}`)
+				.scrollIntoViewIfNeeded(false);
+		}
 	}
 
 	prevSub() {
-		const { subscriptionIds, selectedSubscriptionId, selectSub } = this.props;
+		const { subscriptionIds, selectedSubscriptionId, selectSub, selectTag, tags } = this.props;
 		let idToScrollTo;
+		let tagToScrollTo;
 
-		const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
-		if (currentIndex === 0) {
-			idToScrollTo = ALL_SUBSCRIPTION;
-		} else if (currentIndex >= 0 && currentIndex - 1 >= 0) {
-			idToScrollTo = subscriptionIds[currentIndex - 1];
+		const tag = Object.keys(tags).find((tagToCheck) => {
+			return tags[tagToCheck].includes(selectedSubscriptionId)
+		})
+		if (tag) {
+			const currentTagIndex = tags[tag].indexOf(selectedSubscriptionId);
+			if (currentTagIndex >= 0 && currentTagIndex - 1 >= 0) {
+				idToScrollTo = tags[tag][currentTagIndex - 1];
+			} else {
+				tagToScrollTo = tag;
+			}
 		} else {
-			idToScrollTo = ALL_SUBSCRIPTION;
+			const currentIndex = subscriptionIds.indexOf(selectedSubscriptionId);
+			if (currentIndex === 0) {
+				// Horrible code to jump to the last of the tagged feeds in the list
+				if (Object.values(tags).length && Object.values(tags).slice(-1)[0].length) {
+					idToScrollTo = Object.values(tags).slice(-1)[0].slice(-1)[0];
+				} else {
+					idToScrollTo = ALL_SUBSCRIPTION;
+				}
+			} else if (currentIndex >= 0 && currentIndex - 1 >= 0) {
+				idToScrollTo = subscriptionIds[currentIndex - 1];
+			} else {
+				idToScrollTo = ALL_SUBSCRIPTION;
+			}
 		}
 
-		selectSub(idToScrollTo);
-		document
-			.querySelector(`#sub-item-${idToScrollTo}`)
-			.scrollIntoViewIfNeeded(false);
+
+		if (tagToScrollTo) {
+			selectTag(tagToScrollTo);
+			document
+				.querySelector(`#tag-item-${tagToScrollTo}`)
+				.scrollIntoViewIfNeeded(false);
+
+		} else {
+			selectSub(idToScrollTo);
+			document
+				.querySelector(`#sub-item-${idToScrollTo}`)
+				.scrollIntoViewIfNeeded(false);
+		}
 	}
 
 	sync(e) {
@@ -142,6 +195,7 @@ function mapStateToProps(state) {
 			? getTaggedUnreadSubscriptionIds(state)
 			: getTaggedSubscriptionIds(state),
 		selectedSubscriptionId: getSelectedSub(state),
+		selectedTag: getSelectedTag(state),
 		showFilter: getShowFilter(state),
 		syncing: getSyncingStatus(state),
 	};
@@ -149,6 +203,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
 	selectSub,
+	selectTag,
 	sync,
 	toggleShowFilter,
 };

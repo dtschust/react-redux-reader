@@ -1,7 +1,9 @@
 import { createReducer, createAction } from 'redux-act';
 
-const initialState = { tagsToSubs: {}, subsToTags: {}};
+const initialState = { tagsToSubs: {}, subsToTags: {}, collapsedTags: {}};
 export const setTaggings = createAction('Set the taggings');
+export const toggleTag = createAction('expand or collapse a given tag');
+export const expandTag = createAction('expand a given tag');
 
 export default createReducer({
 	[setTaggings]: (state, payload) => {
@@ -17,8 +19,25 @@ export default createReducer({
 			return acc;
 		}, {})
 
-		return { tagsToSubs, subsToTags }
+		return { tagsToSubs, subsToTags, collapsedTags: { ...state.collapsedTags } }
 	},
+	[toggleTag]: (state, tag) => {
+		return {
+			tagsToSubs: { ...state.tagsToSubs },
+			subsToTags: { ...state.subsToTags },
+			collapsedTags: { ...state.collapsedTags, [tag]: !state.collapsedTags[tag] }
+		}
+	},
+	[expandTag]: (state, tag) => {
+		if (!state.collapsedTags[tag]) {
+			return state;
+		}
+		return {
+			tagsToSubs: { ...state.tagsToSubs },
+			subsToTags: { ...state.subsToTags },
+			collapsedTags: { ...state.collapsedTags, [tag]: !state.collapsedTags[tag] }
+		}
+	}
 }, initialState);
 
 export function getAllTags(state) {
@@ -31,4 +50,8 @@ export function getSubsForTag(state, tag) {
 
 export function getTagsForSub(state, feed_id) {
 	return state.taggings.subsToTags[feed_id] || [];
+}
+
+export function isTagExpanded(state, tag) {
+	return !state.taggings.collapsedTags[tag];
 }

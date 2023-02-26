@@ -9,16 +9,11 @@ import {
 	getSelectedTag,
 	SHOW_UNREAD,
 } from '../redux/reducers/app-state-store';
-import { getSubsForTag } from '../redux/reducers/taggings-store';
+import { getSubsForTag, isTagExpanded, toggleTag } from '../redux/reducers/taggings-store';
 import { getCountForFeed } from '../redux/reducers/feed-items-store';
 import SubListItem from './sub-list-item';
 
 class BaseTagListContainer extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { expand: true };
-	}
-
 	render() {
 		const { tags, tag, style, count } = this.props;
 
@@ -54,9 +49,9 @@ class BaseTagListContainer extends Component {
 				>
 					<span onClick={(e) => {
 						e.stopPropagation();
-						this.setState((prevState) => ({ expand: !prevState.expand}))
+						this.props.toggleTag(tag);
 					}}>
-						{this.state.expand ? '▾ ': '▸ '}
+						{this.props.expanded ? '▾ ': '▸ '}
 					</span>
 					{tag}
 				</div>
@@ -72,7 +67,7 @@ class BaseTagListContainer extends Component {
 				</div>
 			</div >
 			<div style={{ paddingLeft: '10px'}}>
-				{this.state.expand && tags[tag].map(id => {
+				{this.props.expanded && tags[tag].map(id => {
 					return <SubListItem id={id} key={id} />;
 				})}
 			</div>
@@ -92,11 +87,13 @@ function mapStateToProps(state, { tag }) {
 		tags,
 		count,
 		isActive: getSelectedTag(state) === tag,
+		expanded: isTagExpanded(state, tag),
 	}
 }
 
 const mapDispatchToProps = {
 	selectTag,
+	toggleTag,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseTagListContainer);

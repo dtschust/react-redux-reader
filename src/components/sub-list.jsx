@@ -10,6 +10,7 @@ import {
 	getTaggedSubscriptionIds,
 	getTaggedUnreadSubscriptionIds,
 } from '../redux/reducers/subscriptions-store';
+import { toggleTag, expandTag } from '../redux/reducers/taggings-store'
 import {
 	toggleShowFilter,
 	selectSub,
@@ -32,6 +33,7 @@ class SubList extends Component {
 		this.keyboardShortcuts = {
 			n: this.nextSub.bind(this),
 			p: this.prevSub.bind(this),
+			x: this.toggleTag.bind(this),
 		};
 		this.sync = this.sync.bind(this);
 		this.logout = this.logout.bind(this);
@@ -50,14 +52,22 @@ class SubList extends Component {
 		});
 	}
 
+	toggleTag() {
+		const { selectedTag, toggleTag } = this.props;
+		if (!selectedTag) {
+			return;
+		}
+		toggleTag(selectedTag);
+	}
 	nextSub() {
-		const { subscriptionIds, selectedSubscriptionId, selectedTag, selectSub, selectTag, tags } = this.props;
+		const { subscriptionIds, selectedSubscriptionId, selectedTag, selectSub, selectTag, tags, expandTag } = this.props;
 		let idToScrollTo;
 		let tagToScrollTo;
 		const tag = Object.keys(tags).find((tagToCheck) => {
 			return tags[tagToCheck].includes(selectedSubscriptionId)
 		})
 		if (selectedTag) {
+			expandTag(selectedTag);
 			idToScrollTo = tags[selectedTag].length ? tags[selectedTag][0] : ALL_SUBSCRIPTION;
 		} else if (tag) {
 			const currentTagIndex = tags[tag].indexOf(selectedSubscriptionId);
@@ -95,7 +105,7 @@ class SubList extends Component {
 	}
 
 	prevSub() {
-		const { subscriptionIds, selectedSubscriptionId, selectSub, selectTag, tags } = this.props;
+		const { subscriptionIds, selectedSubscriptionId, selectSub, selectTag, tags, expandTag } = this.props;
 		let idToScrollTo;
 		let tagToScrollTo;
 
@@ -114,6 +124,7 @@ class SubList extends Component {
 			if (currentIndex === 0) {
 				// Horrible code to jump to the last of the tagged feeds in the list
 				if (Object.values(tags).length && Object.values(tags).slice(-1)[0].length) {
+					expandTag(Object.keys(tags).slice(-1)[0]);
 					idToScrollTo = Object.values(tags).slice(-1)[0].slice(-1)[0];
 				} else {
 					idToScrollTo = ALL_SUBSCRIPTION;
@@ -205,6 +216,8 @@ const mapDispatchToProps = {
 	selectSub,
 	selectTag,
 	sync,
+	toggleTag,
+	expandTag,
 	toggleShowFilter,
 };
 

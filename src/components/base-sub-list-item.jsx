@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function({ id, title, tag, count, isActive, selectSub, style }) {
+export default function({ id, title, count, isActive, selectSub, style }) {
 	return (
 		<div
 			id={`sub-item-${id}`}
@@ -29,7 +29,7 @@ export default function({ id, title, tag, count, isActive, selectSub, style }) {
 						whiteSpace: 'nowrap',
 					}}
 				>
-					{tag ? `${tag}: `: ''}{title}
+					{title}
 				</div>
 				<div
 					style={{

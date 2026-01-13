@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { purgePersistor } from './redux/configure-store';
 
+// new endpoint
 const API_ENDPOINT = 'https://tools.drew.shoes/v2';
 
 const ACCESS_TOKEN = localStorage.getItem('accessToken');

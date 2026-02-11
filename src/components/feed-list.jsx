@@ -24,12 +24,15 @@ import { cleanup } from '../redux/reducers/pending-cleanup-store';
 
 import FeedListItem from './feed-list-item';
 
+const IFRAME_LOAD_TIMEOUT_MS = 3000;
+
 class FeedList extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			iframeUrl: undefined,
 		};
+		this.iframeLoadTimeout = undefined;
 		this.keyboardShortcuts = {
 			j: this.nextItem.bind(this),
 			k: this.prevItem.bind(this),
@@ -50,6 +53,7 @@ class FeedList extends Component {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.unbind(shortcut, cb);
 		});
+		this.clearIframeLoadTimeout();
 	}
 
 	nextItem() {
@@ -102,23 +106,56 @@ class FeedList extends Component {
 		if (!selectedFeedItemUrl) {
 			return;
 		}
-		this.setState({ iframeUrl: selectedFeedItemUrl });
+		this.setState({ iframeUrl: selectedFeedItemUrl }, () => {
+			this.startIframeLoadTimeout(selectedFeedItemUrl);
+		});
 	}
 
 	openInBrowser() {
 		const { selectedFeedId, openFeedItemInBrowser } = this.props;
+		this.clearIframeLoadTimeout();
 		if (this.state.iframeUrl) {
 			this.setState({ iframeUrl: undefined });
-			selectedFeedId && openFeedItemInBrowser(selectedFeedId);
 		}
+		if (!selectedFeedId) {
+			return;
+		}
+		openFeedItemInBrowser(selectedFeedId);
 	}
 
 	handleEscape() {
 		if (this.state.iframeUrl) {
+			this.clearIframeLoadTimeout();
 			this.setState({ iframeUrl: undefined });
 			return;
 		}
 		this.unselectItem();
+	}
+
+	startIframeLoadTimeout(expectedUrl) {
+		this.clearIframeLoadTimeout();
+		this.iframeLoadTimeout = window.setTimeout(() => {
+			if (this.state.iframeUrl !== expectedUrl) {
+				return;
+			}
+			this.openInBrowser();
+		}, IFRAME_LOAD_TIMEOUT_MS);
+	}
+
+	clearIframeLoadTimeout() {
+		if (this.iframeLoadTimeout) {
+			window.clearTimeout(this.iframeLoadTimeout);
+			this.iframeLoadTimeout = undefined;
+		}
+	}
+
+	handleIframeLoad() {
+		debugger;
+		this.clearIframeLoadTimeout();
+	}
+
+	handleIframeError() {
+		this.openInBrowser();
 	}
 
 	unselectItem() {
@@ -156,6 +193,8 @@ class FeedList extends Component {
 							title="Feed item preview"
 							className="feed-item-modal-iframe"
 							src={this.state.iframeUrl}
+							onLoad={this.handleIframeLoad.bind(this)}
+							onError={this.handleIframeError.bind(this)}
 						/>
 					</div>
 				)}

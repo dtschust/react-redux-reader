@@ -15,6 +15,7 @@ import {
 import {
 	openFeedItemInBrowser,
 	toggleReadStatus,
+	getFeedItem,
 	getFeedItemIdsForSelectedSub,
 	getFeedItemIdsForSelectedTag,
 	fetchFeedItemsForSub,
@@ -23,16 +24,23 @@ import { cleanup } from '../redux/reducers/pending-cleanup-store';
 
 import FeedListItem from './feed-list-item';
 
+const IFRAME_LOAD_TIMEOUT_MS = 3000;
+
 class FeedList extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			iframeUrl: undefined,
+		};
+		this.iframeLoadTimeout = undefined;
 		this.keyboardShortcuts = {
 			j: this.nextItem.bind(this),
 			k: this.prevItem.bind(this),
 			m: this.toggleRead.bind(this),
-			b: this.openInBrowser.bind(this),
+			b: this.openInIframe.bind(this),
+			o: this.openInBrowser.bind(this),
 			c: this.cleanup.bind(this),
-			escape: this.unselectItem.bind(this),
+			escape: this.handleEscape.bind(this),
 		};
 		this.fetchFeedsForActiveSub = this.fetchFeedsForActiveSub.bind(this);
 	}
@@ -45,6 +53,7 @@ class FeedList extends Component {
 		_.forEach(this.keyboardShortcuts, (cb, shortcut) => {
 			Mousetrap.unbind(shortcut, cb);
 		});
+		this.clearIframeLoadTimeout();
 	}
 
 	nextItem() {
@@ -92,9 +101,61 @@ class FeedList extends Component {
 		this.props.cleanup();
 	}
 
+	openInIframe() {
+		const { selectedFeedItemUrl } = this.props;
+		if (!selectedFeedItemUrl) {
+			return;
+		}
+		this.setState({ iframeUrl: selectedFeedItemUrl }, () => {
+			this.startIframeLoadTimeout(selectedFeedItemUrl);
+		});
+	}
+
 	openInBrowser() {
 		const { selectedFeedId, openFeedItemInBrowser } = this.props;
-		selectedFeedId && openFeedItemInBrowser(selectedFeedId);
+		this.clearIframeLoadTimeout();
+		if (this.state.iframeUrl) {
+			this.setState({ iframeUrl: undefined });
+		}
+		if (!selectedFeedId) {
+			return;
+		}
+		openFeedItemInBrowser(selectedFeedId);
+	}
+
+	handleEscape() {
+		if (this.state.iframeUrl) {
+			this.clearIframeLoadTimeout();
+			this.setState({ iframeUrl: undefined });
+			return;
+		}
+		this.unselectItem();
+	}
+
+	startIframeLoadTimeout(expectedUrl) {
+		this.clearIframeLoadTimeout();
+		this.iframeLoadTimeout = window.setTimeout(() => {
+			if (this.state.iframeUrl !== expectedUrl) {
+				return;
+			}
+			this.openInBrowser();
+		}, IFRAME_LOAD_TIMEOUT_MS);
+	}
+
+	clearIframeLoadTimeout() {
+		if (this.iframeLoadTimeout) {
+			window.clearTimeout(this.iframeLoadTimeout);
+			this.iframeLoadTimeout = undefined;
+		}
+	}
+
+	handleIframeLoad() {
+		debugger;
+		this.clearIframeLoadTimeout();
+	}
+
+	handleIframeError() {
+		this.openInBrowser();
 	}
 
 	unselectItem() {
@@ -126,6 +187,17 @@ class FeedList extends Component {
 				{this.props.feedIds.map(id => {
 					return <FeedListItem id={id} key={id} />;
 				})}
+				{this.state.iframeUrl && (
+					<div className="feed-item-modal-overlay">
+						<iframe
+							title="Feed item preview"
+							className="feed-item-modal-iframe"
+							src={this.state.iframeUrl}
+							onLoad={this.handleIframeLoad.bind(this)}
+							onError={this.handleIframeError.bind(this)}
+						/>
+					</div>
+				)}
 			</div>
 		);
 	}
@@ -133,9 +205,12 @@ class FeedList extends Component {
 
 function mapStateToProps(state) {
 	const tag = getSelectedTag(state);
+	const selectedFeedId = getSelectedFeedItemId(state);
+	const selectedFeedItem = selectedFeedId ? getFeedItem(state, selectedFeedId) : undefined;
 	return {
 		feedIds: tag ? getFeedItemIdsForSelectedTag(state, tag): getFeedItemIdsForSelectedSub(state),
-		selectedFeedId: getSelectedFeedItemId(state),
+		selectedFeedId,
+		selectedFeedItemUrl: selectedFeedItem && selectedFeedItem.url,
 		selectedSubId: getSelectedSub(state),
 		showFilter: getShowFilter(state),
 	};

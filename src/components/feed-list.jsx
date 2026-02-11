@@ -15,6 +15,7 @@ import {
 import {
 	openFeedItemInBrowser,
 	toggleReadStatus,
+	getFeedItem,
 	getFeedItemIdsForSelectedSub,
 	getFeedItemIdsForSelectedTag,
 	fetchFeedItemsForSub,
@@ -26,13 +27,17 @@ import FeedListItem from './feed-list-item';
 class FeedList extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			iframeUrl: undefined,
+		};
 		this.keyboardShortcuts = {
 			j: this.nextItem.bind(this),
 			k: this.prevItem.bind(this),
 			m: this.toggleRead.bind(this),
-			b: this.openInBrowser.bind(this),
+			b: this.openInIframe.bind(this),
+			o: this.openInBrowser.bind(this),
 			c: this.cleanup.bind(this),
-			escape: this.unselectItem.bind(this),
+			escape: this.handleEscape.bind(this),
 		};
 		this.fetchFeedsForActiveSub = this.fetchFeedsForActiveSub.bind(this);
 	}
@@ -92,9 +97,28 @@ class FeedList extends Component {
 		this.props.cleanup();
 	}
 
+	openInIframe() {
+		const { selectedFeedItemUrl } = this.props;
+		if (!selectedFeedItemUrl) {
+			return;
+		}
+		this.setState({ iframeUrl: selectedFeedItemUrl });
+	}
+
 	openInBrowser() {
 		const { selectedFeedId, openFeedItemInBrowser } = this.props;
-		selectedFeedId && openFeedItemInBrowser(selectedFeedId);
+		if (this.state.iframeUrl) {
+			this.setState({ iframeUrl: undefined });
+			selectedFeedId && openFeedItemInBrowser(selectedFeedId);
+		}
+	}
+
+	handleEscape() {
+		if (this.state.iframeUrl) {
+			this.setState({ iframeUrl: undefined });
+			return;
+		}
+		this.unselectItem();
 	}
 
 	unselectItem() {
@@ -126,6 +150,15 @@ class FeedList extends Component {
 				{this.props.feedIds.map(id => {
 					return <FeedListItem id={id} key={id} />;
 				})}
+				{this.state.iframeUrl && (
+					<div className="feed-item-modal-overlay">
+						<iframe
+							title="Feed item preview"
+							className="feed-item-modal-iframe"
+							src={this.state.iframeUrl}
+						/>
+					</div>
+				)}
 			</div>
 		);
 	}
@@ -133,9 +166,12 @@ class FeedList extends Component {
 
 function mapStateToProps(state) {
 	const tag = getSelectedTag(state);
+	const selectedFeedId = getSelectedFeedItemId(state);
+	const selectedFeedItem = selectedFeedId ? getFeedItem(state, selectedFeedId) : undefined;
 	return {
 		feedIds: tag ? getFeedItemIdsForSelectedTag(state, tag): getFeedItemIdsForSelectedSub(state),
-		selectedFeedId: getSelectedFeedItemId(state),
+		selectedFeedId,
+		selectedFeedItemUrl: selectedFeedItem && selectedFeedItem.url,
 		selectedSubId: getSelectedSub(state),
 		showFilter: getShowFilter(state),
 	};

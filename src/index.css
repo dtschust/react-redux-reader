@@ -79,3 +79,24 @@ a {
 .story-view img {
 	max-width: 100%;
 }
+
+.feed-item-modal-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.65);
+	z-index: 999;
+}
+
+.feed-item-modal-iframe {
+	width: 80vw;
+	height: 80vh;
+	border: 0;
+	background: #fff;
+	box-shadow: 0 8px 35px rgba(0, 0, 0, 0.45);
+}

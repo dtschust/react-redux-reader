@@ -18,7 +18,7 @@
 		"redux-act": "^1.4.0",
 		"redux-persist": "^4.9.1",
 		"redux-thunk": "^2.2.0",
-		"sanitize-html": "^1.14.1"
+		"sanitize-html": "^2.3.2"
 	},
 	"scripts": {
 		"prettier": "prettier --write src/**/*.js*",
